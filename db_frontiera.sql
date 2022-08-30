@@ -4,7 +4,10 @@ USE erp_integration;
 
 CREATE TABLE products(
     id_wp INT NOT NULL,
-    id_sam_erp VARCHAR(32) NOT NULL, 
+    id_sam_erp VARCHAR(32) NOT NULL,
+    name VARCHAR(64) NOT NULL,
+    categories VARCHAR(64) NOT NULL, #MANY TO MANY?
+    tags VARCHAR(64) NOT NULL, #MANY TO MANY?
     stock FLOAT NOT NULL,
     price FLOAT NOT NULL,
     photo_url VARCHAR(2056),
@@ -29,8 +32,7 @@ CREATE TABLE orders(
     customer_id_sam_erp INT,
     customer_id_wp INT NOT NULL,
     order_status VARCHAR(16),
-    shipping_address VARCHAR(512) NOT NULL,
-    
+    shipping_address VARCHAR(512) NOT NULL,  
 );
 
 CREATE TABLE customers(
