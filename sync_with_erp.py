@@ -3,33 +3,18 @@ from smtp_email import *
 from sql import query_sync_db
 
 """
-Per Dario
-[] problema SSL cannot curl itself (certified not recognised by the server)
-https://superuser.com/questions/1723202/ssl-certificates-no-longer-work-with-curl
-https://github.com/bayaro/windows-certs-2-wsl 
-[] Creare variabile is_wp_active sul erp
-[] Stock si aggiorna sempre ERP -> WP ? 
-[] Si deve creare un DB di frontiera per il prodotto (oltre alle varianti)?
-[] Come creano l'ordine sul DB una volta creato su WP?
-
-"""
-"""
-[] Quantità minima e multipla
-"""
-
-"""
 [] Utente registrato da WP fa partire email interna per notificare il responsabile
    che un nuovo utente si è registrato e bisogna attivare l'account 
    #TODO[API WP]
 [x] Una volta il responsabile attiva l'account (tramite is_wp_active) viene inviata
    una mail all'utente per indicarli che può accedere al suo account. 
+[] Sincronizza informazione del prodotto (Sempre dal gestionale -> WP)
+    [] Crea prodotto wu WP
+    [] Sincronizza prodotto su WP
 [] Quando viene fatto l'ordine online, oltre alla mail per il cliente, arriva una mail
    per il responsabile 
    #TODO[API WP]
 [] Dissattiva account da gestionale (is_wp_active) / o WP #TODO[Aggancio WP]
-[] Sincronizza informazione del prodotto (Sempre dal gestionale -> WP)
-    [] Crea prodotto wu WP
-    [] Sincronizza prodotto su WP
 [] Aggancia ordine dall'ERP con l'ordine di WP
 [] Sincronizza stato dell'ordine
 """

@@ -31,9 +31,18 @@ CREATE TABLE orders(
     custom_image_url VARCHAR(2056),
     customer_id_sam_erp INT,
     customer_id_wp INT NOT NULL,
+    shipping_id_sam_erp INT,
+    shipping_id_wp INT NOT NULL,
     order_status VARCHAR(16),
-    shipping_address VARCHAR(512) NOT NULL,  
+    -- shipping_address VARCHAR(512) NOT NULL,
+    -- shipping_email VARCHAR(64),
+    -- shipping_contact_name VARCHAR(128),
+    -- shipping_company_name VARCHAR(256),
 );
+
+CREATE TABLE shipments(
+    
+)
 
 CREATE TABLE customers(
     id_wp INT NOT NULL,
