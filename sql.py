@@ -10,7 +10,7 @@ DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
 DB_NAME = os.getenv("DB_NAME")
 
-def query_sync_db(query, write=False):
+def query_sync_db(query, dictionary=False, write=False):
     try:
         config = {
             'user': DB_USER,
@@ -22,7 +22,7 @@ def query_sync_db(query, write=False):
         }
 
         cnx = mysql.connector.connect(**config)
-        cursor = cnx.cursor()
+        cursor = cnx.cursor(dictionary=dictionary)
         cursor.execute(query)
         return_list = [x for x in cursor]
         if write:
