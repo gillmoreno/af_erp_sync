@@ -1,9 +1,10 @@
 # https://woocommerce.github.io/woocommerce-rest-api-docs/?python#product-properties
 
-from .auth import wcapi
+from auth import wcapi
 
 def create_product(
-        name: str,
+        name_it: str,
+        name_en: str,
         _type: str,
         regular_price: str,
         description_it: str,
@@ -13,22 +14,33 @@ def create_product(
         categories: list, #list of dicts
         images: list,
         dimensions: dict,
-        meta: dict = {}
+        attributes: list,
+        meta_it: list = [],
+        meta_en: list = [],
     ):
     data = {
-        "name": name,
+        "name": name_it,
         "type": _type,
         "regular_price": regular_price,
-        "description_it": description_it,
-        "short_description_it": short_description_it,
-        "description_en": description_en,
-        "short_description_en": short_description_en,
+        "description": description_it,
+        "short_description": short_description_it,
         "categories": categories,
         "images": images,
         "dimensions": dimensions,
-        "meta": meta
+        "attributes": attributes,
+        "meta_data": meta_it
     }
-    print(wcapi.post("products", data).json())
+    italian_product = wcapi.post("products", data).json()
+    data_en = {
+        "name": name_en,
+        "description": description_en,
+        "short_description": short_description_en,
+        "meta_data": meta_en,
+        "lang": "en",
+        "translation_of": italian_product['id']
+    }
+    print(wcapi.post("products", data_en).json())
+
 
 def retrieve_product(product_id: int):
     print(wcapi.get(f"products/{str(product_id)}").json())
@@ -39,23 +51,105 @@ def update_product(product_id: int, data: dict):
 def delete_product(product_id: int):
     print(wcapi.delete(f"products/{str(product_id)}", params={"force": True}).json())
 
+def create_product_variation(
+        product_id: int,
+        sku: str,
+        regular_price: str,
+        image: dict,
+        dimensions: dict,
+        attributes_it: list,
+        attributes_en: list,
+    ):
+    """Attributes must be created beforehand"""
+    data = {
+        "sku": sku,
+        "regular_price": regular_price,
+        "image": image,
+        "dimensions": dimensions,
+        "attributes": attributes_it
+    }
+    italian_variation = wcapi.post(f"products/{str(product_id)}/variations", data).json()
+    data_en = {
+        "lang": "en",
+        "translation_of": italian_variation['id'],
+        "attributes": attributes_en
+    }
+    print(wcapi.post(f"products/{str(product_id+1)}/variations", data_en).json())
+
+
 # create_product(
-#     name="Will it work with dimensions?",
+#     name_it="Python + REST API",
+#     name_en="Oh YEAH!",
 #     _type="variable",
 #     regular_price='12',
 #     description_it="La descrizione in italiano",
 #     short_description_it="Desc ita",
-#     description_en="The description in english",
-#     short_description_en="Desc eng",
-#     categories=[{'id': 27}],
+#     description_en="ENGLISH STUFF",
+#     short_description_en="EN...",
+#     categories=[{'id': 42}],
 #     dimensions={
-#         'length': '10',
-#         'width': '10',
-#         'height': '10'
+#         'length': '15',
+#         'width': '15',
+#         'height': '15'
 #     },
-#     images=""
+#     attributes=[
+#         {
+#             "id": 2,
+#             "variation": True,
+#             "visible": True,
+#             "options": ["100x100", "200x200"]
+#         },
+#         {
+#             "id": 3,
+#             "variation": True,
+#             "visible": True,
+#             "options": ["Rosso - Rosso", "Viola - Blu"]
+#         },
+#     ],
+#     images="",
+#     meta_it = [
+#         {
+#             "key": "_yoast_wpseo_metadesc",
+#             "value": "Prova SEO"
+#         }
+#     ],
+#     meta_en = [
+#         {
+#             "key": "_yoast_wpseo_metadesc",
+#             "value": "Some SEO Test"
+#         }
+#     ]
 # )
 
 
-
-# print(len(wcapi.get("products").json()))
+# create_product_variation(
+#     product_id=212,
+#     sku="sku_05",
+#     regular_price="199",
+#     image=None,
+#     dimensions={
+#         'length': '25',
+#         'width': '100',
+#         'height': '333'
+#     },
+#     attributes_it=[
+#         {
+#             "id": 2,
+#             "option": "100x100"
+#         },
+#         {
+#             "id": 3,
+#             "option": "Rosso - Rosso"
+#         }
+#     ],
+#     attributes_en=[
+#         {
+#             "id": 2,
+#             "option": "100x100-en"
+#         },
+#         {
+#             "id": 3,
+#             "option": "red-red-en"
+#         }
+#     ],
+# )
