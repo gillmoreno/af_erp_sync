@@ -65,7 +65,7 @@ def create_attributes():
 def create_parent_products():
     products_to_create = get_products_out_of_sync(new_only=True, is_variation=False)
     for product in products_to_create:
-        id_wp = create_product(
+        wp_product = create_product(
             title_it=product['title_it'],
             title_en=product['title_en'],
             _type="variable",
@@ -102,15 +102,16 @@ def create_parent_products():
                 }
             ]
         )
-        sync_new_product(product['id_sam_erp'], id_wp)
+        sync_new_product(product['id_sam_erp'], wp_product)
 
-def sync_new_product(id_sam_erp: str, id_wp: int):
+def sync_new_product(id_sam_erp: str, wp_product: dict):
     query = f"""
         UPDATE 
             products 
         SET 
             in_sync=1,
-            id_wp={str(id_wp)}
+            id_wp={str(wp_product['italian_id'])},
+            id_wp_en={str(wp_product['english_id'])}
         WHERE 
             id_sam_erp='{id_sam_erp}';
     """
@@ -123,7 +124,7 @@ def create_variations():
     variations_to_create = get_products_out_of_sync(new_only=True, is_variation=True)
     for variation in variations_to_create:
         product_id = get_product_wp_id(variation['id_parent_sam_erp'])
-        id_wp = create_product_variation(
+        wp_variation = create_product_variation(
             product_id=product_id,
             sku=variation['sku'],
             regular_price=str(variation['price']),
@@ -154,7 +155,7 @@ def create_variations():
                 }
             ],
         )
-        sync_new_variation(variation['sku'], id_wp)
+        sync_new_variation(variation['sku'], wp_variation)
 
 def get_product_wp_id(id_parent_sam_erp: str) -> int:
     query = f"""
@@ -167,13 +168,14 @@ def get_product_wp_id(id_parent_sam_erp: str) -> int:
     """
     return query_sync_db(query=query)[0][0]
 
-def sync_new_variation(sku: str, id_wp: int):
+def sync_new_variation(sku: str, wp_variation: dict):
     query = f"""
         UPDATE 
             variations 
         SET 
             in_sync=1,
-            id_wp={str(id_wp)}
+            id_wp={str(wp_variation['italian_id'])},
+            id_wp_en={str(wp_variation['english_id'])}
         WHERE 
             sku='{sku}';
     """

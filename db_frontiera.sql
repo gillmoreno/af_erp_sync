@@ -5,6 +5,7 @@ USE erp_integration;
 CREATE TABLE products(
     id_sam_erp VARCHAR(32) NOT NULL,
     id_wp INT,
+    id_wp_en INT,
     title_it VARCHAR(64) NOT NULL,
     title_en VARCHAR(64) NOT NULL,
     category VARCHAR(64) NOT NULL,
@@ -28,6 +29,7 @@ CREATE TABLE variations(
     sku VARCHAR(32) NOT NULL,
     id_parent_sam_erp INT NOT NULL,
     id_wp INT,
+    id_wp_en INT,
     description_it TEXT NOT NULL,
     description_en TEXT NOT NULL,
     configurator INT,

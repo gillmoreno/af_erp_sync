@@ -1,6 +1,7 @@
 # https://woocommerce.github.io/woocommerce-rest-api-docs/?python#product-properties
 
 from auth import wcapi
+from sql import query_sync_db
 
 def create_product(
         title_it: str,
@@ -17,20 +18,19 @@ def create_product(
         attributes: list,
         meta_it: list = [],
         meta_en: list = [],
-    ) -> int:
+    ) -> dict:
     data = {
         "name": title_it,
         "type": _type,
-        # "regular_price": regular_price,
         "description": description_it,
         "short_description": short_description_it,
         "categories": categories,
         "images": images,
-        # "dimensions": dimensions,
         "attributes": attributes,
         "meta_data": meta_it
     }
     italian_product = wcapi.post("products", data).json()
+    print(italian_product)
     data_en = {
         "name": title_en,
         "description": description_en,
@@ -39,8 +39,12 @@ def create_product(
         "lang": "en",
         "translation_of": italian_product['id']
     }
-    print(wcapi.post("products", data_en).json())
-    return italian_product['id']
+    english_product = wcapi.post("products", data_en).json()
+    print(english_product)
+    return {
+        "italian_id": italian_product['id'],
+        "english_id": english_product['id'],
+    }
 
 
 def retrieve_product(product_id: int):
@@ -60,7 +64,7 @@ def create_product_variation(
         dimensions: dict,
         attributes_it: list,
         attributes_en: list,
-    ) -> int:
+    ) -> dict:
     """Attributes must be created beforehand"""
     data = {
         "sku": sku,
@@ -76,83 +80,19 @@ def create_product_variation(
         "translation_of": italian_variation['id'],
         "attributes": attributes_en
     }
-    print(wcapi.post(f"products/{str(product_id+1)}/variations", data_en).json())
-    return italian_variation['id']
+    english_variation = wcapi.post(f"products/{str(product_id+1)}/variations", data_en).json()
+    print(english_variation)
+    return {
+        "italian_id": italian_variation['id'],
+        "english_id": english_variation['id'],
+    }
 
+def get_translation_id(post_id: int) -> int:
+    query = """
+        SELECT
 
-# create_product(
-#     name_it="Python + REST API",
-#     name_en="Oh YEAH!",
-#     _type="variable",
-#     regular_price='12',
-#     description_it="La descrizione in italiano",
-#     short_description_it="Desc ita",
-#     description_en="ENGLISH STUFF",
-#     short_description_en="EN...",
-#     categories=[{'id': 42}],
-#     dimensions={
-#         'length': '15',
-#         'width': '15',
-#         'height': '15'
-#     },
-#     attributes=[
-#         {
-#             "id": 2,
-#             "variation": True,
-#             "visible": True,
-#             "options": ["100x100", "200x200"]
-#         },
-#         {
-#             "id": 3,
-#             "variation": True,
-#             "visible": True,
-#             "options": ["Rosso - Rosso", "Viola - Blu"]
-#         },
-#     ],
-#     images="",
-#     meta_it = [
-#         {
-#             "key": "_yoast_wpseo_metadesc",
-#             "value": "Prova SEO"
-#         }
-#     ],
-#     meta_en = [
-#         {
-#             "key": "_yoast_wpseo_metadesc",
-#             "value": "Some SEO Test"
-#         }
-#     ]
-# )
+        FROM
 
-
-# create_product_variation(
-#     product_id=212,
-#     sku="sku_05",
-#     regular_price="199",
-#     image=None,
-#     dimensions={
-#         'length': '25',
-#         'width': '100',
-#         'height': '333'
-#     },
-#     attributes_it=[
-#         {
-#             "id": 2,
-#             "option": "100x100"
-#         },
-#         {
-#             "id": 3,
-#             "option": "Rosso - Rosso"
-#         }
-#     ],
-#     attributes_en=[
-#         {
-#             "id": 2,
-#             "option": "100x100-en"
-#         },
-#         {
-#             "id": 3,
-#             "option": "red-red-en"
-#         }
-#     ],
-# )
+        WHERE
+    """
+    query_sync_db()
