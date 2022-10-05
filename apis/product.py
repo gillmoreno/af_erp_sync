@@ -3,36 +3,36 @@
 from auth import wcapi
 
 def create_product(
-        name_it: str,
-        name_en: str,
+        title_it: str,
+        title_en: str,
         _type: str,
-        regular_price: str,
+        # regular_price: str,
         description_it: str,
-        short_description_it: str,
         description_en: str,
+        short_description_it: str,
         short_description_en: str,
         categories: list, #list of dicts
         images: list,
-        dimensions: dict,
+        # dimensions: dict,
         attributes: list,
         meta_it: list = [],
         meta_en: list = [],
     ):
     data = {
-        "name": name_it,
+        "name": title_it,
         "type": _type,
-        "regular_price": regular_price,
+        # "regular_price": regular_price,
         "description": description_it,
         "short_description": short_description_it,
         "categories": categories,
         "images": images,
-        "dimensions": dimensions,
+        # "dimensions": dimensions,
         "attributes": attributes,
         "meta_data": meta_it
     }
     italian_product = wcapi.post("products", data).json()
     data_en = {
-        "name": name_en,
+        "name": title_en,
         "description": description_en,
         "short_description": short_description_en,
         "meta_data": meta_en,
