@@ -22,7 +22,7 @@ def get_out_of_sync_product_attributes() -> list:
            list(itertools.chain(*colors_options_it)), \
            list(itertools.chain(*colors_options_en))
 
-def split_attributes(attributes: list):
+def split_attributes(attributes: str) -> list:
     return [
         attribute.strip()
         for attribute in attributes.split(",")
@@ -62,16 +62,142 @@ def create_attributes():
     dimensions_options, colors_options_it, colors_options_en = get_out_of_sync_product_attributes()
     create_attributes_terms(dimensions_options, colors_options_it, colors_options_en)
 
+def create_parent_products():
+    products_to_create = get_products_out_of_sync(new_only=True, is_variation=False)
+    for product in products_to_create:
+        id_wp = create_product(
+            title_it=product['title_it'],
+            title_en=product['title_en'],
+            _type="variable",
+            description_it=product['description_it'],
+            description_en=product['description_en'],
+            short_description_it=product['short_description_it'],
+            short_description_en=product['short_description_en'],
+            categories=[{'id': product['category']}],
+            attributes=[
+                {
+                    "id": 2,
+                    "variation": True,
+                    "visible": True,
+                    "options": split_attributes(product['dimensions_options'])
+                },
+                {
+                    "id": 3,
+                    "variation": True,
+                    "visible": True,
+                    "options": split_attributes(product['colors_options_it'])
+                },
+            ],
+            images="",
+            meta_it = [
+                {
+                    "key": "_yoast_wpseo_metadesc",
+                    "value": product['meta_description_it']
+                }
+            ],
+            meta_en = [
+                {
+                    "key": "_yoast_wpseo_metadesc",
+                    "value": product['meta_description_en']
+                }
+            ]
+        )
+        sync_new_product(product['id_sam_erp'], id_wp)
 
-def get_out_of_sync_products() -> list:
-    query = query_sync_db(query="SELECT * FROM products WHERE in_sync=0", dictionary=True)
-    print(query)
+def sync_new_product(id_sam_erp: str, id_wp: int):
+    query = f"""
+        UPDATE 
+            products 
+        SET 
+            in_sync=1,
+            id_wp={str(id_wp)}
+        WHERE 
+            id_sam_erp='{id_sam_erp}';
+    """
+    query_sync_db(query, False, True)
 
+def update_parent_products():
+    pass
+
+def create_variations():
+    variations_to_create = get_products_out_of_sync(new_only=True, is_variation=True)
+    for variation in variations_to_create:
+        product_id = get_product_wp_id(variation['id_parent_sam_erp'])
+        id_wp = create_product_variation(
+            product_id=product_id,
+            sku=variation['sku'],
+            regular_price=str(variation['price']),
+            image=variation['image_'],
+            dimensions={
+                'length': str(variation['length_']),
+                'width': str(variation['width']),
+                'height': str(variation['height'])
+            },
+            attributes_it=[
+                {
+                    "id": 2,
+                    "option": slugify(variation['dimensions'])
+                },
+                {
+                    "id": 3,
+                    "option": slugify(variation['color_it'])
+                }
+            ],
+            attributes_en=[
+                {
+                    "id": 2,
+                    "option": slugify(f"{variation['dimensions']}-en")
+                },
+                {
+                    "id": 3,
+                    "option": slugify(f"{variation['color_en']}-en")
+                }
+            ],
+        )
+        sync_new_variation(variation['sku'], id_wp)
+
+def get_product_wp_id(id_parent_sam_erp: str) -> int:
+    query = f"""
+        SELECT
+            id_wp
+        FROM
+            products
+        WHERE
+            id_sam_erp='{id_parent_sam_erp}'
+    """
+    return query_sync_db(query=query)[0][0]
+
+def sync_new_variation(sku: str, id_wp: int):
+    query = f"""
+        UPDATE 
+            variations 
+        SET 
+            in_sync=1,
+            id_wp={str(id_wp)}
+        WHERE 
+            sku='{sku}';
+    """
+    query_sync_db(query, False, True)
+
+def get_products_out_of_sync(new_only: bool, is_variation: bool) -> list:
+    table = "variations" if is_variation else "products"
+    query_for_new = "AND id_wp=0" if new_only else ""
+    query = f"""
+        SELECT 
+            * 
+        FROM 
+            {table}
+        WHERE
+            in_sync=0 {query_for_new}
+    """
+    return_data = query_sync_db(query=query, dictionary=True)
+    if not return_data:
+        print("Non ci sono prodotti da sincrinizzare")
+    return return_data
 
 
 
 
 # create_attributes()
-get_out_of_sync_products()
 # create_parent_products()
-# create_products_variations()
+# create_variations()

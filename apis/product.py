@@ -17,7 +17,7 @@ def create_product(
         attributes: list,
         meta_it: list = [],
         meta_en: list = [],
-    ):
+    ) -> int:
     data = {
         "name": title_it,
         "type": _type,
@@ -40,6 +40,7 @@ def create_product(
         "translation_of": italian_product['id']
     }
     print(wcapi.post("products", data_en).json())
+    return italian_product['id']
 
 
 def retrieve_product(product_id: int):
@@ -59,7 +60,7 @@ def create_product_variation(
         dimensions: dict,
         attributes_it: list,
         attributes_en: list,
-    ):
+    ) -> int:
     """Attributes must be created beforehand"""
     data = {
         "sku": sku,
@@ -69,12 +70,14 @@ def create_product_variation(
         "attributes": attributes_it
     }
     italian_variation = wcapi.post(f"products/{str(product_id)}/variations", data).json()
+    print(italian_variation)
     data_en = {
         "lang": "en",
         "translation_of": italian_variation['id'],
         "attributes": attributes_en
     }
     print(wcapi.post(f"products/{str(product_id+1)}/variations", data_en).json())
+    return italian_variation['id']
 
 
 # create_product(
