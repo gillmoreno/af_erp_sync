@@ -1,7 +1,6 @@
 # https://woocommerce.github.io/woocommerce-rest-api-docs/?python#product-properties
 
 from auth import wcapi
-from sql import query_sync_db
 
 def create_product(
         title_it: str,
@@ -31,6 +30,13 @@ def create_product(
     }
     italian_product = wcapi.post("products", data).json()
     print(italian_product)
+    # vpc_en_initial_config = {
+    #     italian_product['id']+1: {
+    #         'config-id': "",
+    #         'config-edit-link': 0,
+    #     }
+    # }
+    # meta_en.append({"key": "vpc-config", "value": vpc_en_initial_config})
     data_en = {
         "name": title_en,
         "description": description_en,
@@ -47,8 +53,8 @@ def create_product(
     }
 
 
-def retrieve_product(product_id: int):
-    print(wcapi.get(f"products/{str(product_id)}").json())
+def retrieve_product(product_id: int) -> dict:
+    return wcapi.get(f"products/{str(product_id)}").json()
 
 def update_product(product_id: int, data: dict):
     print(wcapi.put(f"products/{str(product_id)}", data).json())
@@ -64,6 +70,11 @@ def create_product_variation(
         dimensions: dict,
         attributes_it: list,
         attributes_en: list,
+        configurator_it: int,
+        configurator_page_it: int,
+        configurator_en: int,
+        configurator_page_en: int,
+
     ) -> dict:
     """Attributes must be created beforehand"""
     data = {
@@ -71,9 +82,11 @@ def create_product_variation(
         "regular_price": regular_price,
         "image": image,
         "dimensions": dimensions,
-        "attributes": attributes_it
+        "attributes": attributes_it,
     }
     italian_variation = wcapi.post(f"products/{str(product_id)}/variations", data).json()
+    add_vpc_config(configurator_it, configurator_page_it, product_id, italian_variation['id'])
+    print("italian_variation")
     print(italian_variation)
     data_en = {
         "lang": "en",
@@ -81,18 +94,47 @@ def create_product_variation(
         "attributes": attributes_en
     }
     english_variation = wcapi.post(f"products/{str(product_id+1)}/variations", data_en).json()
+    print("english_variation")
     print(english_variation)
+    add_vpc_config(configurator_en, configurator_page_en, product_id+1, english_variation['id']+1)
     return {
         "italian_id": italian_variation['id'],
-        "english_id": english_variation['id'],
+        "english_id": english_variation['id']+1,
     }
 
-def get_translation_id(post_id: int) -> int:
-    query = """
-        SELECT
+def add_vpc_config(
+        configurator_id: int,
+        configurator_page_id: int,
+        product_id: int,
+        variation_id: int
+    ):
+    current_config_object = get_current_config_object(product_id)
+    current_config_object[variation_id] = {
+        'config-id': configurator_id,
+        'config-edit-link': configurator_page_id
+    }
+    data = {
+        "meta_data": [
+            {
+                "key": "vpc-config",
+                "value": current_config_object
+            }
+        ]
+    }
+    update_product(product_id, data)
 
-        FROM
+def get_current_config_object(product_id: int) -> dict:
+    meta_data = retrieve_product(product_id)['meta_data']
+    for md in meta_data:
+        if md['key'] == "vpc-config":
+            return dict_bytes_value(md['value'])
+    return {}
 
-        WHERE
-    """
-    query_sync_db()
+def dict_bytes_value(dict_value: dict) -> dict:
+    return_dict = {}
+    for key, value in dict_value.items():
+        return_dict[int(key)] = {
+            'config-id': value['config-id'],
+            'config-edit-link': value['config-edit-link'],
+        }
+    return return_dict

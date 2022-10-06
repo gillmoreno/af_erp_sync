@@ -12,7 +12,7 @@ def get_out_of_sync_product_attributes() -> list:
         "SELECT dimensions_options, colors_options_it, colors_options_en FROM products WHERE in_sync=0"
     )
     dimensions_options = []
-    colors_options_it = [] 
+    colors_options_it = []
     colors_options_en = []
     for attribute in attributes:
         dimensions_options.append(split_attributes(attribute[0]))
@@ -154,8 +154,13 @@ def create_variations():
                     "option": slugify(f"{variation['color_en']}-en")
                 }
             ],
+            configurator_it=variation['configurator_it'],
+            configurator_page_it=variation['configurator_page_it'],
+            configurator_en=variation['configurator_en'],
+            configurator_page_en=variation['configurator_page_en'],
         )
         sync_new_variation(variation['sku'], wp_variation)
+
 
 def get_product_wp_id(id_parent_sam_erp: str) -> int:
     query = f"""
@@ -194,12 +199,11 @@ def get_products_out_of_sync(new_only: bool, is_variation: bool) -> list:
     """
     return_data = query_sync_db(query=query, dictionary=True)
     if not return_data:
-        print("Non ci sono prodotti da sincrinizzare")
+        print("Non ci sono prodotti da sincronizzare")
     return return_data
 
 
-
-
-# create_attributes()
-# create_parent_products()
-# create_variations()
+if "__main__" in __name__:
+    # create_attributes()
+    create_parent_products()
+    create_variations()
