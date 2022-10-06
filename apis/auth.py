@@ -11,5 +11,6 @@ wcapi = API(
     consumer_key=os.environ.get("WP_KEY"),
     consumer_secret=os.environ.get("WP_SECRET"),
     version="wc/v3",
-    query_string_auth=True
+    query_string_auth=True,
+    timeout=30
 )

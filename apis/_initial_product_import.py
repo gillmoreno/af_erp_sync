@@ -88,7 +88,7 @@ def create_parent_products():
                     "options": split_attributes(product['colors_options_it'])
                 },
             ],
-            images="",
+            images=product['gallery'],
             meta_it = [
                 {
                     "key": "_yoast_wpseo_metadesc",

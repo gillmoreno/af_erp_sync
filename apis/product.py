@@ -24,19 +24,12 @@ def create_product(
         "description": description_it,
         "short_description": short_description_it,
         "categories": categories,
-        "images": images,
+        "images": create_images_array(images),
         "attributes": attributes,
         "meta_data": meta_it
     }
     italian_product = wcapi.post("products", data).json()
     print(italian_product)
-    # vpc_en_initial_config = {
-    #     italian_product['id']+1: {
-    #         'config-id': "",
-    #         'config-edit-link': 0,
-    #     }
-    # }
-    # meta_en.append({"key": "vpc-config", "value": vpc_en_initial_config})
     data_en = {
         "name": title_en,
         "description": description_en,
@@ -52,6 +45,13 @@ def create_product(
         "english_id": english_product['id'],
     }
 
+def create_images_array(images_urls: list) -> list:
+    return_list = [
+        {"src": image_url.strip()}
+        for image_url in images_urls.split(",")
+    ] if images_urls else None
+    print(return_list)
+    return return_list
 
 def retrieve_product(product_id: int) -> dict:
     return wcapi.get(f"products/{str(product_id)}").json()
@@ -77,6 +77,7 @@ def create_product_variation(
 
     ) -> dict:
     """Attributes must be created beforehand"""
+    image = {"src": image} if image else None
     data = {
         "sku": sku,
         "regular_price": regular_price,
