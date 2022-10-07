@@ -5,6 +5,7 @@ import itertools
 from slugify import slugify
 from product import *
 from attributes import *
+from _db_queries import get_products_out_of_sync
 
 
 def get_out_of_sync_product_attributes() -> list:
@@ -68,7 +69,6 @@ def create_parent_products():
         wp_product = create_product(
             title_it=product['title_it'],
             title_en=product['title_en'],
-            _type="variable",
             description_it=product['description_it'],
             description_en=product['description_en'],
             short_description_it=product['short_description_it'],
@@ -185,22 +185,6 @@ def sync_new_variation(sku: str, wp_variation: dict):
             sku='{sku}';
     """
     query_sync_db(query, False, True)
-
-def get_products_out_of_sync(new_only: bool, is_variation: bool) -> list:
-    table = "variations" if is_variation else "products"
-    query_for_new = "AND id_wp=0" if new_only else ""
-    query = f"""
-        SELECT 
-            * 
-        FROM 
-            {table}
-        WHERE
-            in_sync=0 {query_for_new}
-    """
-    return_data = query_sync_db(query=query, dictionary=True)
-    if not return_data:
-        print("Non ci sono prodotti da sincronizzare")
-    return return_data
 
 
 if "__main__" in __name__:
