@@ -5,22 +5,19 @@ from auth import wcapi
 def create_product(
         title_it: str,
         title_en: str,
-        _type: str,
-        # regular_price: str,
         description_it: str,
         description_en: str,
         short_description_it: str,
         short_description_en: str,
         categories: list, #list of dicts
         images: list,
-        # dimensions: dict,
         attributes: list,
         meta_it: list = [],
         meta_en: list = [],
     ) -> dict:
     data = {
         "name": title_it,
-        "type": _type,
+        "type": "variable",
         "description": description_it,
         "short_description": short_description_it,
         "categories": categories,
@@ -45,19 +42,51 @@ def create_product(
         "english_id": english_product['id'],
     }
 
-def create_images_array(images_urls: list) -> list:
+def create_images_array(images_names: list) -> list:
     return_list = [
-        {"src": image_url.strip()}
-        for image_url in images_urls.split(",")
-    ] if images_urls else None
+        {"src": f"https://dev.arturofacchini.it/ftp_product_images/{images_name}"}
+        for images_name in images_names.split(",")
+    ] if images_names else None
     print(return_list)
     return return_list
 
 def retrieve_product(product_id: int) -> dict:
     return wcapi.get(f"products/{str(product_id)}").json()
 
-def update_product(product_id: int, data: dict):
-    print(wcapi.put(f"products/{str(product_id)}", data).json())
+def update_product(
+        product_id: int,
+        product_id_en: int,
+        title_it: str,
+        title_en: str,
+        description_it: str,
+        description_en: str,
+        short_description_it: str,
+        short_description_en: str,
+        categories: list, #list of dicts
+        images: list,
+        # attributes: list,
+        meta_it: list = [],
+        meta_en: list = []
+    ):
+    data = {
+        "name": title_it,
+        "description": description_it,
+        "short_description": short_description_it,
+        "categories": categories,
+        "images": create_images_array(images),
+        # "attributes": attributes,
+        "meta_data": meta_it
+    }
+    print(wcapi.post(f"products/{str(product_id)}", data).json())
+    data_en = {
+        "name": title_en,
+        "description": description_en,
+        "short_description": short_description_en,
+        "meta_data": meta_en,
+        "lang": "en",
+        "translation_of": f"products/{str(product_id)}"
+    }
+    print(wcapi.post(f"products/{str(product_id_en)}", data_en).json())
 
 def delete_product(product_id: int):
     print(wcapi.delete(f"products/{str(product_id)}", params={"force": True}).json())
