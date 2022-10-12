@@ -40,6 +40,7 @@ A new table for the "generic" or "parent" product should be created inside SAM E
 | id_wp_en              | int           | YES   |       | NULL     |         |
 | in_sync               | tinyint(1)    | YES   |       | NULL     |         |
 | id_parent_sam_erp     | varchar(32)   | NO    |       |          |         |
+| is_active             | tinyint(1)    | NO    |       | 1        |         |
 | sku                   | varchar(32)   | NO    | PRI   | NULL     |         |
 | description_it        | text          | NO    |       | NULL     |         |
 | description_en        | text          | NO    |       | NULL     |         |

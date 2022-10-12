@@ -48,6 +48,7 @@ def update_variations():
             product_id_en=get_wp_variation_id(variation["id_parent_sam_erp"])["id_wp_en"],
             variation_id=variation["id_wp"],
             variation_id_en=variation["id_wp_en"],
+            is_active=variation["is_active"],
             sku=variation["sku"],
             regular_price=str(variation["price"]),
             image=variation["image_"],

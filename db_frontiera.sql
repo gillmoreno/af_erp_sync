@@ -48,6 +48,7 @@ CREATE TABLE variations(
     width SMALLINT,
     height SMALLINT,
     in_sync BOOLEAN,
+    is_active BOOLEAN,
     PRIMARY KEY (sku)
 );
 

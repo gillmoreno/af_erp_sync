@@ -101,7 +101,7 @@ def update_product(
     print(wcapi.put(f"products/{str(product_id_en)}", data_en).json())
 
 
-def delete_product(product_id: int):
+def delete_product(product_id: int) -> None:
     print(wcapi.delete(f"products/{str(product_id)}", params={"force": True}).json())
 
 
@@ -169,6 +169,7 @@ def update_product_variation(
     configurator_page_en: int,
     description_it: str,
     description_en: str,
+    is_active: bool,
 ) -> None:
     """Attributes must be created beforehand"""
     image = {"src": image} if image else None
@@ -179,6 +180,7 @@ def update_product_variation(
         "dimensions": dimensions,
         "attributes": attributes_it,
         "description": description_it,
+        "status": "publish" if is_active else "draft",
     }
     print(wcapi.put(f"products/{str(product_id)}/variations/{str(variation_id)}", data).json())
     add_vpc_config(configurator_it, configurator_page_it, product_id, variation_id)
