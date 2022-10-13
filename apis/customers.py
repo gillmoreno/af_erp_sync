@@ -1,39 +1,27 @@
-
 from auth import wcapi
+from typing import List
 
-def create_customer(
-        email: str,
-        first_name: str,
-        last_name: str,
-        username: str,
-        billing: dict = {},
-        shipping: dict = {}
-    ):
+
+def update_customer_status(id_wp: int, status: str):
     data = {
-        "email": email,
-        "first_name": first_name,
-        "last_name": last_name,
-        "username": username,
-        "billing": billing,
-        "shipping": shipping,
+        "meta_data": [
+            {
+                "key": "pw_user_status",
+                "value": status,
+            },
+        ]
     }
-    print(wcapi.post("customers", data).json())
+    print(wcapi.put(f"customers/{str(id_wp)}", data).json())
+
 
 def retrieve_customer(customer_id: int):
     return wcapi.get(f"customers/{str(customer_id)}").json()
 
-def all_customers():
-    return wcapi.get("customers").json()
+
+def get_customers(exclude_ids: List[int] = []):
+    exclude_ids_string = ",".join(str(_id) for _id in exclude_ids)
+    return wcapi.get(f"customers?exclude={exclude_ids_string}").json()
+
 
 def delete_customer(customer_id: int):
     return wcapi.delete(f"customers/{str(customer_id)}", params={"force": True}).json()
-
-# create_customer(
-#     email="biv@hotmail.com",
-#     first_name="biv",
-#     last_name="oc",
-#     username="bivoc",
-# )
-
-print(delete_customer(4))
-print(all_customers())

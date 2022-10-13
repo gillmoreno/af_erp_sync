@@ -72,21 +72,62 @@ CREATE TABLE orders(
     -- shipping_company_name VARCHAR(256),
 );
 
-CREATE TABLE shipments(
-    
-)
 
 CREATE TABLE customers(
     id_wp INT NOT NULL,
     id_sam_erp VARCHAR(32),
+    wp_needs_sync BOOLEAN DEFAULT 0,
+    sam_erp_needs_sync BOOLEAN DEFAULT 0,
+    pw_user_status VARCHAR(32),
     email VARCHAR(64),
-    contact_name VARCHAR(128),
-    company_name VARCHAR(256),
+    username VARCHAR(128),
+    first_name VARCHAR(128),
+    last_name VARCHAR(128),
+    company VARCHAR(256),
     vat_number VARCHAR(16),
-    is_active_wp BOOLEAN NOT NULL,
-    activation_email_sent BOOLEAN NOT NULL,
-    wp_needs_sync BOOLEAN NOT NULL,
-    sam_erp_needs_sync BOOLEAN NOT NULL,
-    address VARCHAR(256),
     PRIMARY KEY (id_wp)
 );
+
+CREATE TABLE billing_addresses(
+    id_wp_customer INT NOT NULL,
+    id_sam_erp VARCHAR(32),
+    first_name VARCHAR(128),
+    last_name VARCHAR(128),
+    company VARCHAR(256),
+    address_1 VARCHAR(256),
+    address_2 VARCHAR(256),
+    city VARCHAR(64),
+    state_ VARCHAR(64),
+    post_code VARCHAR(16),
+    country VARCHAR(64),
+    email VARCHAR(64),
+    phone VARCHAR(64),
+    PRIMARY KEY (id_wp_customer)
+)
+
+CREATE TABLE shipping_addresses(
+    id_wp_customer INT NOT NULL,
+    id_sam_erp VARCHAR(32),
+    first_name VARCHAR(128),
+    last_name VARCHAR(128),
+    company VARCHAR(256),
+    address_1 VARCHAR(256),
+    address_2 VARCHAR(256),
+    city VARCHAR(64),
+    state_ VARCHAR(64),
+    post_code VARCHAR(16),
+    country VARCHAR(64),
+    PRIMARY KEY (id_wp_customer)
+)
+
+CREATE TABLE customers_billing_addresses(
+    billing_address_id VARCHAR(32),
+    customer_id VARCHAR(32),
+    UNIQUE 'unique_together' ('billing_address_id', 'customer_id')
+)
+
+CREATE TABLE customers_shipping_addresses(
+    shipping_address_id VARCHAR(32),
+    customer_id VARCHAR(32),
+    UNIQUE 'unique_together' ('shipping_address_id', 'customer_id')
+)
