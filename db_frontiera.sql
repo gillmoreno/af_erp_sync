@@ -83,7 +83,6 @@ CREATE TABLE customers(
     username VARCHAR(128),
     first_name VARCHAR(128),
     last_name VARCHAR(128),
-    company VARCHAR(256),
     vat_number VARCHAR(16),
     PRIMARY KEY (id_wp)
 );
@@ -103,10 +102,10 @@ CREATE TABLE billing_addresses(
     email VARCHAR(64),
     phone VARCHAR(64),
     PRIMARY KEY (id_wp_customer)
-)
+);
 
 CREATE TABLE shipping_addresses(
-    id_wp_customer INT NOT NULL,
+    id INT NOT NULL AUTO_INCREMENT,
     id_sam_erp VARCHAR(32),
     first_name VARCHAR(128),
     last_name VARCHAR(128),
@@ -117,17 +116,13 @@ CREATE TABLE shipping_addresses(
     state_ VARCHAR(64),
     post_code VARCHAR(16),
     country VARCHAR(64),
-    PRIMARY KEY (id_wp_customer)
-)
-
-CREATE TABLE customers_billing_addresses(
-    billing_address_id VARCHAR(32),
-    customer_id VARCHAR(32),
-    UNIQUE 'unique_together' ('billing_address_id', 'customer_id')
-)
+    PRIMARY KEY (id)
+);
 
 CREATE TABLE customers_shipping_addresses(
-    shipping_address_id VARCHAR(32),
-    customer_id VARCHAR(32),
-    UNIQUE 'unique_together' ('shipping_address_id', 'customer_id')
-)
+    id INT NOT NULL AUTO_INCREMENT,
+    shipping_address_id INT NOT NULL,
+    customer_id INT NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY unique_together (shipping_address_id, customer_id)
+);

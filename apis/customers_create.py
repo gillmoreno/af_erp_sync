@@ -3,7 +3,7 @@ import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from sql import query_sync_db
 from typing import List
-from customers import *
+from customers_wp_apis import *
 
 
 def create_new_customers_db_frontiera():
@@ -16,8 +16,12 @@ def create_new_customers_db_frontiera():
             customer["username"],
             customer["first_name"],
             customer["last_name"],
-            customer["billing"]["company"],
             get_meta_data_key(customer["meta_data"], "vat_number"),
+        )
+        create_db_frontiera_addresses(
+            customer["id"],
+            customer["billing"]["company"],
+            customer["billing"]["country"],
         )
 
 
@@ -34,7 +38,6 @@ def create_db_frontiera_customer(
     username: str,
     first_name: str,
     last_name: str,
-    company: str,
     vat_number: str,
 ):
     query = f"""
@@ -46,7 +49,6 @@ def create_db_frontiera_customer(
                 username,
                 first_name,
                 last_name,
-                company,
                 vat_number,
                 wp_needs_sync,
                 sam_erp_needs_sync
@@ -59,7 +61,6 @@ def create_db_frontiera_customer(
                 '{username}',
                 '{first_name}',
                 '{last_name}',
-                '{company}',
                 '{vat_number}',
                 0,
                 0
@@ -85,39 +86,53 @@ def get_meta_data_key(meta_data: List[dict], key) -> str:
     return "NOT FOUND"
 
 
-def sync_wp_user_status():
-    wp_users_to_sync = get_wp_users_to_sync()
-    for user in wp_users_to_sync:
-        update_customer_status(user["id_wp"], user["pw_user_status"])
-        update_wp_needs_sync(user["id_wp"])
-
-
-def get_wp_users_to_sync():
-    query = """
-        SELECT
-            id_wp,
-            pw_user_status
-        FROM
-            customers
-        WHERE
-            wp_needs_sync = 1;
-    """
-    return query_sync_db(query, True)
-
-
-def update_wp_needs_sync(id_wp: int) -> None:
+def create_db_frontiera_addresses(
+    id_wp: int,
+    company: str,
+    country: str,
+):
     query = f"""
-        UPDATE
-            customers
-        SET
-            wp_needs_sync=0
-        WHERE
-            id_wp = {str(id_wp)};
+        INSERT INTO 
+            billing_addresses(
+                id_wp_customer,
+                company,
+                country
+            ) 
+        VALUES 
+            (
+                {id_wp},
+                '{company}',
+                '{country}'
+            ); 
     """
-    print(query)
+    query_sync_db(query, False, True)
+    query = f"""
+        INSERT INTO 
+            shipping_addresses(
+                company,
+                country
+            ) 
+        VALUES 
+            (
+                '{company}',
+                '{country}'
+            ); 
+    """
+    shipping_address_id = query_sync_db(query, False, True)
+    query = f"""
+        INSERT INTO 
+            customers_shipping_addresses(
+                shipping_address_id,
+                customer_id
+            ) 
+        VALUES 
+            (
+                {shipping_address_id},
+                {id_wp}
+            ); 
+    """
     query_sync_db(query, False, True)
 
 
 if "__main__" in __name__:
     create_new_customers_db_frontiera()
-    sync_wp_user_status()
