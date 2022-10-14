@@ -2,8 +2,9 @@ import os, sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from sql import query_sync_db
-from typing import List
+from _utils import get_meta_data_key
 from customers_wp_apis import *
+from customers__common import *
 
 
 def create_new_customers_db_frontiera():
@@ -67,23 +68,6 @@ def create_db_frontiera_customer(
             ); 
     """
     query_sync_db(query, False, True)
-
-
-def get_db_frontiera_users_wp_ids():
-    query = """
-        SELECT
-            id_wp
-        FROM
-            customers
-    """
-    return query_sync_db(query)
-
-
-def get_meta_data_key(meta_data: List[dict], key) -> str:
-    for data in meta_data:
-        if data["key"] == key:
-            return data["value"]
-    return "NOT FOUND"
 
 
 def create_db_frontiera_addresses(

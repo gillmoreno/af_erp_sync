@@ -18,9 +18,10 @@ def retrieve_customer(customer_id: int):
     return wcapi.get(f"customers/{str(customer_id)}").json()
 
 
-def get_customers(exclude_ids: List[int] = []):
-    exclude_ids_string = ",".join(str(_id) for _id in exclude_ids)
-    return wcapi.get(f"customers?exclude={exclude_ids_string}").json()
+def get_customers(ids: List[int] = [], include: bool = False):
+    ids_string = ",".join(str(_id) for _id in ids)
+    filter_ = "include" if include else "exclude"
+    return wcapi.get(f"customers?{filter_}={ids_string}").json()
 
 
 def delete_customer(customer_id: int):

@@ -97,7 +97,7 @@ CREATE TABLE billing_addresses(
     address_2 VARCHAR(256),
     city VARCHAR(64),
     state_ VARCHAR(64),
-    post_code VARCHAR(16),
+    postcode VARCHAR(16),
     country VARCHAR(64),
     email VARCHAR(64),
     phone VARCHAR(64),
@@ -114,7 +114,7 @@ CREATE TABLE shipping_addresses(
     address_2 VARCHAR(256),
     city VARCHAR(64),
     state_ VARCHAR(64),
-    post_code VARCHAR(16),
+    postcode VARCHAR(16),
     country VARCHAR(64),
     PRIMARY KEY (id)
 );
