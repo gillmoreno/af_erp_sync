@@ -18,7 +18,7 @@ def update_customers_db_frontiera():
             customer["first_name"],
             customer["last_name"],
         )
-        update_db_frontiera_billing_addresses(
+        update_db_frontiera_billing_address(
             customer["id"],
             customer["billing"]["first_name"],
             customer["billing"]["last_name"],
@@ -32,17 +32,22 @@ def update_customers_db_frontiera():
             customer["billing"]["email"],
             customer["billing"]["phone"],
         )
-        # update_db_frontiera_shipping_addresses(
-        #     customer["shipping"]["first_name"],
-        #     customer["shipping"]["last_name"],
-        #     customer["shipping"]["company"],
-        #     customer["shipping"]["address_1"],
-        #     customer["shipping"]["address_2"],
-        #     customer["shipping"]["city"],
-        #     customer["shipping"]["state"],
-        #     customer["shipping"]["postcode"],
-        #     customer["shipping"]["country"],
-        # )
+        multiple_shipping_addresses = get_multiple_shipping_addresses(customer["meta_data"])
+        if multiple_shipping_addresses:
+            update_db_frontiera_shipping_addresses(customer["id"], multiple_shipping_addresses)
+        else:
+            update_db_frontiera_default_shipping_address(
+                customer["id"],
+                customer["shipping"]["first_name"],
+                customer["shipping"]["last_name"],
+                customer["shipping"]["company"],
+                customer["shipping"]["address_1"],
+                customer["shipping"]["address_2"],
+                customer["shipping"]["city"],
+                customer["shipping"]["state"],
+                customer["shipping"]["postcode"],
+                customer["shipping"]["country"],
+            )
 
 
 def get_existing_customers() -> list:
@@ -74,7 +79,7 @@ def update_db_frontiera_customer(
     query_sync_db(query, False, True)
 
 
-def update_db_frontiera_billing_addresses(
+def update_db_frontiera_billing_address(
     id_wp: int,
     first_name: str,
     last_name: str,
@@ -109,34 +114,126 @@ def update_db_frontiera_billing_addresses(
     query_sync_db(query, False, True)
 
 
-# def update_db_frontiera_shipping_addresses(
-#     first_name: str,
-#     last_name: str,
-#     company: str,
-#     address_1: str,
-#     address_2: str,
-#     city: str,
-#     state_: str,
-#     postcode: str,
-#     country: str,
-# ):
-#     query = f"""
-#         UPDATE
-#             customers
-#         SET
-#             first_name='{first_name}',
-#             last_name='{last_name}',
-#             company='{company}',
-#             address_1='{address_1}',
-#             address_2='{address_2}',
-#             city='{city}',
-#             state_='{state_}',
-#             postcode='{postcode}',
-#             country='{country}'
-#         WHERE
-#             id_wp={str(id_wp)};
-#     """
-#     query_sync_db(query, False, True)
+def update_db_frontiera_default_shipping_address(
+    id_wp: int,
+    first_name: str,
+    last_name: str,
+    company: str,
+    address_1: str,
+    address_2: str,
+    city: str,
+    state_: str,
+    postcode: str,
+    country: str,
+):
+    query = f"""
+        SELECT
+            shipping_address_id
+        FROM
+            customers_shipping_addresses
+        WHERE
+            customer_id={str(id_wp)}
+    """
+    shipping_address_id = query_sync_db(query, True)[0]["shipping_address_id"]
+    query = f"""
+        UPDATE
+            shipping_addresses
+        SET
+            first_name='{first_name}',
+            last_name='{last_name}',
+            company='{company}',
+            address_1='{address_1}',
+            address_2='{address_2}',
+            city='{city}',
+            state_='{state_}',
+            postcode='{postcode}',
+            country='{country}'
+        WHERE
+            id={str(shipping_address_id)};
+    """
+    query_sync_db(query, False, True)
+
+
+def get_multiple_shipping_addresses(meta_data: list):
+    for item in meta_data:
+        if item["key"] == "thwma_custom_address":
+            print(item["value"])
+            return item["value"]
+    return False
+
+
+def update_db_frontiera_shipping_addresses(wp_customer_id: int, thwma_custom_address: dict) -> None:
+    for address in thwma_custom_address["shipping"].keys():
+        query = f"""
+            SELECT
+                shipping_address_id
+            FROM
+                customers_shipping_addresses
+            WHERE
+                customer_id={str(wp_customer_id)} and address_book='{address}'
+        """
+        shipping_address = query_sync_db(query, True)
+        if shipping_address and "shipping_address_id" in shipping_address[0].keys():
+            query = f"""
+                UPDATE
+                    shipping_addresses
+                SET
+                    first_name='{thwma_custom_address["shipping"][address].get("shipping_first_name", "")}',
+                    last_name='{thwma_custom_address["shipping"][address].get("shipping_last_name", "")}',
+                    company='{thwma_custom_address["shipping"][address].get("shipping_company", "")}',
+                    address_1='{thwma_custom_address["shipping"][address].get("shipping_address_1", "")}',
+                    address_2='{thwma_custom_address["shipping"][address].get("shipping_address_2", "")}',
+                    city='{thwma_custom_address["shipping"][address].get("shipping_city", "")}',
+                    state_='{thwma_custom_address["shipping"][address].get("shipping_state", "")}',
+                    postcode='{thwma_custom_address["shipping"][address].get("shipping_postcode", "")}',
+                    country='{thwma_custom_address["shipping"][address].get("shipping_country", "")}'
+                WHERE
+                    id={str(shipping_address[0]["shipping_address_id"])};
+            """
+            query_sync_db(query, False, True)
+        else:
+            query = f"""
+                INSERT INTO 
+                    shipping_addresses(
+                        first_name,
+                        last_name,
+                        company,
+                        address_1,
+                        address_2,
+                        city,
+                        state_,
+                        postcode,
+                        country
+                    ) 
+                VALUES 
+                    (
+                        '{thwma_custom_address["shipping"][address].get("shipping_first_name", "")}',
+                        '{thwma_custom_address["shipping"][address].get("shipping_last_name", "")}',
+                        '{thwma_custom_address["shipping"][address].get("shipping_company", "")}',
+                        '{thwma_custom_address["shipping"][address].get("shipping_address_1", "")}',
+                        '{thwma_custom_address["shipping"][address].get("shipping_address_2", "")}',
+                        '{thwma_custom_address["shipping"][address].get("shipping_city", "")}',
+                        '{thwma_custom_address["shipping"][address].get("shipping_state", "")}',
+                        '{thwma_custom_address["shipping"][address].get("shipping_postcode", "")}',
+                        '{thwma_custom_address["shipping"][address].get("shipping_country", "")}'
+                    ); 
+            """
+            shipping_address_id = query_sync_db(query, True, True)
+            query = f"""
+                INSERT INTO
+                    customers_shipping_addresses(
+                        shipping_address_id,
+                        customer_id,
+                        address_book
+                    )
+                VALUES
+                    (
+                        {shipping_address_id},
+                        {wp_customer_id},
+                        '{address}'
+                    )
+            """
+            query_sync_db(query, False, True)
 
 
 if "__main__" in __name__:

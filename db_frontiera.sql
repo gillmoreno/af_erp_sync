@@ -123,6 +123,7 @@ CREATE TABLE customers_shipping_addresses(
     id INT NOT NULL AUTO_INCREMENT,
     shipping_address_id INT NOT NULL,
     customer_id INT NOT NULL,
+    address_book VARCHAR(16) DEFAULT 'address_0',
     PRIMARY KEY (id),
-    UNIQUE KEY unique_together (shipping_address_id, customer_id)
+    UNIQUE KEY unique_together (shipping_address_id, customer_id, address_book)
 );

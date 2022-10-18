@@ -8,7 +8,7 @@ from customers__common import *
 
 
 def create_new_customers_db_frontiera():
-    new_customers = get_new_approved_customers()
+    new_customers = get_new_customers()
     for customer in new_customers:
         create_db_frontiera_customer(
             customer["id"],
@@ -26,7 +26,7 @@ def create_new_customers_db_frontiera():
         )
 
 
-def get_new_approved_customers() -> list:
+def get_new_customers() -> list:
     db_frontiera_users_wp_ids = get_db_frontiera_users_wp_ids()
     ids_to_exclude = [_id[0] for _id in db_frontiera_users_wp_ids]
     return get_customers(ids_to_exclude)
