@@ -112,7 +112,6 @@ CREATE TABLE orders(
     id_sam_erp VARCHAR(32),
     currency VARCHAR(3),
     date_created VARCHAR(32),
-    quantity FLOAT NOT NULL,
     discount_total FLOAT DEFAULT 0,
     discount_tax FLOAT DEFAULT 0,
     shipping_total FLOAT DEFAULT 0,
@@ -123,6 +122,15 @@ CREATE TABLE orders(
     customer_id INT NOT NULL,
     shipping_address_id INT NOT NULL,
     customer_note TEXT,
+    shipping_first_name VARCHAR(128),
+    shipping_last_name VARCHAR(128),
+    shipping_company VARCHAR(256),
+    shipping_address_1 VARCHAR(256),
+    shipping_address_2 VARCHAR(256),
+    shipping_city VARCHAR(64),
+    shipping_state VARCHAR(64),
+    shipping_postcode VARCHAR(16),
+    shipping_country VARCHAR(64),
     PRIMARY KEY (id_wp)
 );
 
@@ -130,6 +138,7 @@ CREATE TABLE order_products(
     id INT NOT NULL AUTO_INCREMENT,
     order_id_wp INT NOT NULL,
     sku VARCHAR(32) NOT NULL,
+    quantity INT NOT NULL,
     subtotal FLOAT DEFAULT 0,
     subtotal_tax FLOAT DEFAULT 0,
     total FLOAT DEFAULT 0,
