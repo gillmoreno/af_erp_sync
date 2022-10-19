@@ -52,27 +52,6 @@ CREATE TABLE variations(
     PRIMARY KEY (sku)
 );
 
-
-
-CREATE TABLE orders(
-    id_wp INT NOT NULL,
-    id_sam_erp VARCHAR(32),
-    quantity FLOAT NOT NULL,
-    email_to_af_sent BOOLEAN,
-    is_custom BOOLEAN,
-    custom_image_url VARCHAR(2056),
-    customer_id_sam_erp INT,
-    customer_id_wp INT NOT NULL,
-    shipping_id_sam_erp INT,
-    shipping_id_wp INT NOT NULL,
-    order_status VARCHAR(16),
-    -- shipping_address VARCHAR(512) NOT NULL,
-    -- shipping_email VARCHAR(64),
-    -- shipping_contact_name VARCHAR(128),
-    -- shipping_company_name VARCHAR(256),
-);
-
-
 CREATE TABLE customers(
     id_wp INT NOT NULL,
     id_sam_erp VARCHAR(32),
@@ -126,4 +105,39 @@ CREATE TABLE customers_shipping_addresses(
     address_book VARCHAR(16) DEFAULT 'address_0',
     PRIMARY KEY (id),
     UNIQUE KEY unique_together (shipping_address_id, customer_id, address_book)
+);
+
+CREATE TABLE orders(
+    id_wp INT NOT NULL,
+    id_sam_erp VARCHAR(32),
+    currency VARCHAR(3),
+    date_created VARCHAR(32),
+    quantity FLOAT NOT NULL,
+    discount_total FLOAT DEFAULT 0,
+    discount_tax FLOAT DEFAULT 0,
+    shipping_total FLOAT DEFAULT 0,
+    shipping_tax FLOAT DEFAULT 0,
+    cart_tax FLOAT DEFAULT 0,
+    total FLOAT DEFAULT 0,
+    total_tax FLOAT DEFAULT 0,
+    customer_id INT NOT NULL,
+    shipping_address_id INT NOT NULL,
+    customer_note TEXT,
+    PRIMARY KEY (id_wp)
+);
+
+CREATE TABLE order_products(
+    id INT NOT NULL AUTO_INCREMENT,
+    order_id_wp INT NOT NULL,
+    sku VARCHAR(32) NOT NULL,
+    subtotal FLOAT DEFAULT 0,
+    subtotal_tax FLOAT DEFAULT 0,
+    total FLOAT DEFAULT 0,
+    total_tax FLOAT DEFAULT 0,
+    price FLOAT DEFAULT 0,
+    uploaded_image VARCHAR(256),
+    preview_image VARCHAR(256),
+    cliche_position VARCHAR(8),
+    PRIMARY KEY (id),
+    UNIQUE KEY unique_together (order_id_wp, sku)
 );
