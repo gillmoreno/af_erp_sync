@@ -1,6 +1,7 @@
-# https://woocommerce.github.io/woocommerce-rest-api-docs/?python#product-properties
+import os, sys
 
-from auth import wcapi
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from apis.auth import wcapi
 
 
 def create_product(

@@ -3,7 +3,7 @@ import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from sql import query_sync_db
 from typing import List
-from customers import *
+from customers_wp_apis import *
 
 
 # customers_with_no_address_ids = get_customers_with_no_addresses_from_db_frontiera()

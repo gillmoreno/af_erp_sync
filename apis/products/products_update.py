@@ -3,8 +3,8 @@ import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from sql import query_sync_db
 from slugify import slugify
-from product import update_product, update_product_variation
-from _db_queries import get_products_out_of_sync
+from products.products_wp_apis import update_product, update_product_variation
+from apis._db_queries import get_products_out_of_sync
 
 
 def update_products():
