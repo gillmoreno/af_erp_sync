@@ -4,9 +4,13 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from sql import query_sync_db
 from _utils import get_meta_data_key
 from orders_wp_apis import *
+import json
 
 
 def create_new_orders_db_frontiera():
+    """
+    This cronjob must run AFTER customers sync
+    """
     new_orders = get_new_orders()
     for order in new_orders:
         shipping_address_id = get_shipping_address_id(order["shipping"])
@@ -34,6 +38,8 @@ def create_new_orders_db_frontiera():
             shipping_postcode=order["shipping"]["postcode"],
             shipping_country=order["shipping"]["country"],
         )
+        for item in order["line_items"]:
+            create_db_frontiera_order_products(order["id"], item)
 
 
 def get_new_orders() -> list:
@@ -43,7 +49,6 @@ def get_new_orders() -> list:
 
 
 def get_shipping_address_id(shipping_address: dict) -> int:
-    print(shipping_address)
     query = f"""
         SELECT
             id
@@ -87,7 +92,7 @@ def create_db_frontiera_order(
     shipping_state: str,
     shipping_postcode: str,
     shipping_country: str,
-):
+) -> None:
     query = f"""
         INSERT INTO 
             orders(
@@ -151,6 +156,61 @@ def get_db_frontiera_orders_wp_ids():
             orders 
     """
     return query_sync_db(query)
+
+
+def create_db_frontiera_order_products(order_id: int, item: dict) -> None:
+    cliche_position, uploaded_image, preview_image = get_cliche_info(item["meta_data"])
+    query = f"""
+        INSERT INTO
+            order_products(
+                order_id_wp,
+                sku,
+                quantity,
+                subtotal,
+                subtotal_tax,
+                total,
+                total_tax,
+                price,
+                uploaded_image,
+                preview_image,
+                cliche_position
+            )
+        VALUES
+            (
+                {order_id},
+                '{item["sku"]}',
+                {item["quantity"]},
+                {item["subtotal"]},
+                {item["subtotal_tax"]},
+                {item["total"]},
+                {item["total_tax"]},
+                {item["price"]},
+                '{uploaded_image}',
+                '{preview_image}',
+                '{cliche_position}'
+            )
+
+    """
+    query_sync_db(query, False, True)
+
+
+def get_cliche_info(meta_data: List[dict]) -> tuple:
+    vpc_cart_data = get_meta_data_key(meta_data, "vpc-cart-data")
+    vpc_custom_data = get_meta_data_key(meta_data, "vpc-custom-data")
+    if vpc_cart_data != "NOT FOUND" and vpc_custom_data != "NOT FOUND":
+        canvas_data = json.loads(vpc_cart_data["canvas_data"])
+        keys = list(canvas_data["text_and_upload_panel"].keys())
+        variable_key = keys[0] if keys else None
+        uploaded_image = (
+            canvas_data["text_and_upload_panel"][variable_key]["src"] if variable_key else ""
+        )
+        return (
+            vpc_cart_data["Posizione cliché"],
+            uploaded_image,
+            vpc_custom_data["preview_saved"],
+        )
+    else:
+        return "", "", ""
 
 
 if "__main__" in __name__:
