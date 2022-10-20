@@ -4,7 +4,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from sql import query_sync_db
 from slugify import slugify
 from products.products_wp_apis import *
-from attributes.attributes_create import split_attributes
 
 import os, sys
 
@@ -15,6 +14,7 @@ from _db_queries import get_products_out_of_sync
 def create_parent_products():
     products_to_create = get_products_out_of_sync(new_only=True, is_variation=False)
     for product in products_to_create:
+        product_attributes = get_product_attributes(product["id_sam_erp"])
         wp_product = create_product(
             title_it=product["title_it"],
             title_en=product["title_en"],
@@ -28,13 +28,13 @@ def create_parent_products():
                     "id": 2,
                     "variation": True,
                     "visible": True,
-                    "options": split_attributes(product["dimensions_options"]),
+                    "options": product_attributes["dimensions"],
                 },
                 {
                     "id": 3,
                     "variation": True,
                     "visible": True,
-                    "options": split_attributes(product["colors_options_it"]),
+                    "options": product_attributes["colors_it"],
                 },
             ],
             images=product["gallery"],
@@ -42,6 +42,23 @@ def create_parent_products():
             meta_en=[{"key": "_yoast_wpseo_metadesc", "value": product["meta_description_en"]}],
         )
         sync_new_product(product["id_sam_erp"], wp_product)
+
+
+def get_product_attributes(id_parent_sam_erp: str) -> dict:
+    query = f"""
+        SELECT 
+            dimensions, color_it 
+        FROM 
+            variations 
+        WHERE 
+            in_sync=0 AND id_parent_sam_erp='{id_parent_sam_erp}';
+    """
+    result = query_sync_db(query, True)
+    return_dict = {"dimensions": [], "colors_it": []}
+    for option in result:
+        return_dict["dimensions"].append(option["dimensions"])
+        return_dict["colors_it"].append(option["color_it"])
+    return return_dict
 
 
 def sync_new_product(id_sam_erp: str, wp_product: dict):

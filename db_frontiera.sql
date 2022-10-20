@@ -18,9 +18,6 @@ CREATE TABLE products(
     description_en TEXT NOT NULL,
     short_description_it TEXT NOT NULL,
     short_description_en TEXT NOT NULL,
-    dimensions_options VARCHAR(512) NOT NULL,
-    colors_options_it VARCHAR(512) NOT NULL,
-    colors_options_en VARCHAR(512) NOT NULL,
     in_sync BOOLEAN,
     PRIMARY KEY (id_sam_erp)
 );

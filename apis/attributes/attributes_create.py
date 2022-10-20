@@ -5,50 +5,49 @@ from sql import query_sync_db
 import itertools
 from slugify import slugify
 from attributes.attributes_wp_apis import *
+from typing import List
 
 
-def get_out_of_sync_product_attributes() -> list:
-    attributes = query_sync_db(
-        "SELECT dimensions_options, colors_options_it, colors_options_en FROM products WHERE in_sync=0"
-    )
+def get_out_of_sync_product_attributes() -> List[str]:
+    query = """
+        SELECT 
+            dimensions, color_it, color_en 
+        FROM 
+            variations 
+        WHERE 
+            in_sync=0
+    """
+    attributes = query_sync_db(query, True)
     dimensions_options = []
     colors_options_it = []
     colors_options_en = []
     for attribute in attributes:
-        dimensions_options.append(split_attributes(attribute[0]))
-        colors_options_it.append(split_attributes(attribute[1]))
-        colors_options_en.append(split_attributes(attribute[2]))
-    return (
-        list(itertools.chain(*dimensions_options)),
-        list(itertools.chain(*colors_options_it)),
-        list(itertools.chain(*colors_options_en)),
-    )
-
-
-def split_attributes(attributes: str) -> list:
-    return [attribute.strip() for attribute in attributes.split(",")]
+        dimensions_options.append(attribute["dimensions"])
+        colors_options_it.append(attribute["color_it"])
+        colors_options_en.append(attribute["color_en"])
+    return list(set(dimensions_options)), list(set(colors_options_it)), list(set(colors_options_en))
 
 
 def create_attributes_terms(
-    dimensions_options: list, colors_options_it: list, colors_options_en: list
+    dimensions_options: List[str], colors_options_it: List[str], colors_options_en: List[str]
 ):
     create_dimensions_attribute_terms(dimensions_options)
     create_colors_attribute_terms(colors_options_it, colors_options_en)
 
 
-def create_dimensions_attribute_terms(dimensions_options: list):
+def create_dimensions_attribute_terms(dimensions_options: List[str]):
     non_existing_dimensions = get_non_existing_attributes(dimensions_options, 2)
     for dimensions in non_existing_dimensions:
         create_attribute_term(2, dimensions["value"], dimensions["value"])
 
 
-def create_colors_attribute_terms(colors_options_it: list, colors_options_en: list):
+def create_colors_attribute_terms(colors_options_it: List[str], colors_options_en: List[str]):
     non_existing_colors = get_non_existing_attributes(colors_options_it, 3)
     for color in non_existing_colors:
         create_attribute_term(3, color["value"], colors_options_en[color["index"]])
 
 
-def get_non_existing_attributes(options: list, attribute_id: int) -> list:
+def get_non_existing_attributes(options: List[str], attribute_id: int) -> List[dict]:
     return_list = []
     for i, option in enumerate(options):
         slug = slugify(option)
