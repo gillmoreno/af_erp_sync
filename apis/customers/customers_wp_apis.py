@@ -3,6 +3,7 @@ from typing import List
 
 
 def update_customer_status(id_wp: int, status: str):
+    print(f"-> update_customer_status id_wp: {str(id_wp)}, status: {status}")
     data = {
         "meta_data": [
             {

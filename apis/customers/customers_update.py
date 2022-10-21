@@ -1,12 +1,13 @@
 import os, sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from sql import query_sync_db
-from _utils import get_meta_data_key
-from customers_wp_apis import *
-from customers__common import *
+from apis.sql import query_sync_db
+from utils import *
+from customers.customers_wp_apis import *
+from customers.customers__common import *
 
 
+@print_name
 def update_customers_db_frontiera():
     existing_customers = get_existing_customers()
     for customer in existing_customers:

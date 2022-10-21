@@ -1,17 +1,20 @@
 import os, sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from sql import query_sync_db
-from _utils import get_meta_data_key
-from orders_wp_apis import *
+from apis.sql import query_sync_db
+from utils import *
+from orders.orders_wp_apis import *
 import json
 
 
+@print_name
 def create_new_orders_db_frontiera():
     """
     This cronjob must run AFTER customers sync
     """
     new_orders = get_new_orders()
+    if not new_orders:
+        print("--> NO NEW ORDERS TO CREATE\n...\n")
     for order in new_orders:
         shipping_address_id = get_shipping_address_id(order["shipping"])
         create_db_frontiera_order(

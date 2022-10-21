@@ -1,4 +1,5 @@
-from sql import query_sync_db
+from apis.sql import query_sync_db
+
 
 def get_products_out_of_sync(new_only: bool, is_variation: bool) -> list:
     table = "variations" if is_variation else "products"

@@ -1,14 +1,20 @@
 import os, sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from sql import query_sync_db
-from _utils import get_meta_data_key
-from customers_wp_apis import *
-from customers__common import *
+from apis.sql import query_sync_db
+from utils import *
+from customers.customers_wp_apis import *
+from customers.customers__common import *
 
 
+@print_name
 def create_new_customers_db_frontiera():
+    """
+    Checks for customers inside WP that are not in db_frontiera and writes them
+    """
     new_customers = get_new_customers()
+    if not new_customers:
+        print("--> NO NEW CUSTOMERS TO SYNC\n...\n")
     for customer in new_customers:
         create_db_frontiera_customer(
             customer["id"],

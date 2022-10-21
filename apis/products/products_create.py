@@ -1,18 +1,21 @@
 import os, sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from sql import query_sync_db
+from apis.sql import query_sync_db
 from slugify import slugify
 from products.products_wp_apis import *
-
+from utils import print_name
 import os, sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from _db_queries import get_products_out_of_sync
+from db_queries import get_products_out_of_sync
 
 
+@print_name
 def create_parent_products():
     products_to_create = get_products_out_of_sync(new_only=True, is_variation=False)
+    if not products_to_create:
+        print("--> NO PRODUCTS TO CREATE\n...\n")
     for product in products_to_create:
         product_attributes = get_product_attributes(product["id_sam_erp"])
         wp_product = create_product(
@@ -75,8 +78,11 @@ def sync_new_product(id_sam_erp: str, wp_product: dict):
     query_sync_db(query, False, True)
 
 
+@print_name
 def create_variations():
     variations_to_create = get_products_out_of_sync(new_only=True, is_variation=True)
+    if not variations_to_create:
+        print("--> NO VARIATIONS TO CREATE\n...\n")
     for variation in variations_to_create:
         product_id = get_product_wp_id(variation["id_parent_sam_erp"])
         wp_variation = create_product_variation(
