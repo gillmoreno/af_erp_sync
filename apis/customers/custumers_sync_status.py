@@ -4,6 +4,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils import print_name
 from apis.sql import query_sync_db
 from customers.customers_wp_apis import *
+import logging
 
 
 @print_name
@@ -13,7 +14,7 @@ def sync_wp_user_status():
     """
     wp_users_to_sync = get_wp_users_to_sync()
     if not wp_users_to_sync:
-        print("--> NO USERS TO SYNC\n...\n")
+        logging.info("--> NO USERS TO SYNC\n...\n")
     for user in wp_users_to_sync:
         update_customer_status(user["id_wp"], user["pw_user_status"])
         update_wp_needs_sync(user["id_wp"])
@@ -41,7 +42,7 @@ def update_wp_needs_sync(id_wp: int) -> None:
         WHERE
             id_wp = {str(id_wp)};
     """
-    print(query)
+    logging.info(query)
     query_sync_db(query, False, True)
 
 

@@ -158,7 +158,6 @@ def update_db_frontiera_default_shipping_address(
 def get_multiple_shipping_addresses(meta_data: list):
     for item in meta_data:
         if item["key"] == "thwma_custom_address":
-            print(item["value"])
             return item["value"]
     return False
 

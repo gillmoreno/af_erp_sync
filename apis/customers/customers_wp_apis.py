@@ -1,9 +1,10 @@
 from auth import wcapi
 from typing import List
+import logging
 
 
 def update_customer_status(id_wp: int, status: str):
-    print(f"-> update_customer_status id_wp: {str(id_wp)}, status: {status}")
+    logging.info(f"-> update_customer_status id_wp: {str(id_wp)}, status: {status}")
     data = {
         "meta_data": [
             {
@@ -12,7 +13,7 @@ def update_customer_status(id_wp: int, status: str):
             },
         ]
     }
-    print(wcapi.put(f"customers/{str(id_wp)}", data).json())
+    logging.info(wcapi.put(f"customers/{str(id_wp)}", data).json())
 
 
 def retrieve_customer(customer_id: int):

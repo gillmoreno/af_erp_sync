@@ -6,13 +6,14 @@ from slugify import slugify
 from utils import print_name
 from products.products_wp_apis import update_product, update_product_variation
 from apis.db_queries import get_products_out_of_sync
+import logging
 
 
 @print_name
 def update_products():
     products_to_update = get_products_out_of_sync(False, False)
     if not products_to_update:
-        print("--> NO PRODUCTS TO UPDATE\n...\n")
+        logging.info("--> NO PRODUCTS TO UPDATE\n...\n")
     for product in products_to_update:
         update_product(
             product_id=product["id_wp"],
@@ -47,7 +48,7 @@ def sync_updated_product(id_sam_erp: str) -> None:
 def update_variations():
     variations_to_update = get_products_out_of_sync(False, True)
     if not variations_to_update:
-        print("--> NO VARIATIONS TO UPDATE\n...\n")
+        logging.info("--> NO VARIATIONS TO UPDATE\n...\n")
     for variation in variations_to_update:
         update_product_variation(
             product_id=get_wp_variation_id(variation["id_parent_sam_erp"])["id_wp"],

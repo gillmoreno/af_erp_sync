@@ -1,4 +1,5 @@
 from typing import List
+import logging
 
 
 def get_meta_data_key(meta_data: List[dict], key) -> str:
@@ -10,8 +11,8 @@ def get_meta_data_key(meta_data: List[dict], key) -> str:
 
 def print_name(func):
     def wrapper():
-        print(f"--> START executing {func.__name__}")
+        logging.info(f"--> START executing {func.__name__}")
         func()
-        print(f"--> FINISHED executing {func.__name__}\n ...")
+        logging.info(f"--> FINISHED executing {func.__name__}\n ...")
 
     return wrapper

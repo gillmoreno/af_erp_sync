@@ -5,6 +5,7 @@ from apis.sql import query_sync_db
 from utils import *
 from orders.orders_wp_apis import *
 import json
+import logging
 
 
 @print_name
@@ -14,7 +15,7 @@ def create_new_orders_db_frontiera():
     """
     new_orders = get_new_orders()
     if not new_orders:
-        print("--> NO NEW ORDERS TO CREATE\n...\n")
+        logging.info("--> NO NEW ORDERS TO CREATE\n...\n")
     for order in new_orders:
         shipping_address_id = get_shipping_address_id(order["shipping"])
         create_db_frontiera_order(
