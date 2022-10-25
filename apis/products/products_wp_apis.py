@@ -13,7 +13,8 @@ def create_product(
     short_description_it: str,
     short_description_en: str,
     categories: list,  # list of dicts
-    images: list,
+    cover_image: str,
+    gallery_images: str,
     attributes: list,
     meta_it: list = [],
     meta_en: list = [],
@@ -24,7 +25,7 @@ def create_product(
         "description": description_it,
         "short_description": short_description_it,
         "categories": categories,
-        "images": create_images_array(images),
+        "images": create_images_array(cover_image, gallery_images),
         "attributes": attributes,
         "meta_data": meta_it,
     }
@@ -46,16 +47,15 @@ def create_product(
     }
 
 
-def create_images_array(images_names: list) -> list:
-    return_list = (
-        [
-            {"src": f"https://dev.arturofacchini.it/ftp_product_images/{images_name}"}
-            for images_name in images_names.split(",")
-        ]
-        if images_names
-        else None
-    )
-    logging.info(return_list)
+def create_images_array(cover_image: str, gallery_images: str) -> list:
+    return_list = []
+    if cover_image:
+        return_list.append(
+            {"src": f"https://dev.arturofacchini.it/ftp_product_images/{cover_image}"}
+        )
+    if gallery_images:
+        for image in gallery_images.split(","):
+            return_list.append({"src": f"https://dev.arturofacchini.it/ftp_product_images/{image}"})
     return return_list
 
 
@@ -77,7 +77,8 @@ def update_product(
     short_description_it: str,
     short_description_en: str,
     categories: list,  # list of dicts
-    images: list,
+    cover_image: str,
+    gallery_images: str,
     # attributes: list,
     meta_it: list = [],
     meta_en: list = [],
@@ -87,7 +88,7 @@ def update_product(
         "description": description_it,
         "short_description": short_description_it,
         "categories": categories,
-        "images": create_images_array(images),
+        "images": create_images_array(cover_image, gallery_images),
         # "attributes": attributes,
         "meta_data": meta_it,
     }
@@ -123,7 +124,7 @@ def create_product_variation(
     description_en: str,
 ) -> dict:
     """Attributes must be created beforehand"""
-    image = {"src": image} if image else None
+    image = {"src": f"https://dev.arturofacchini.it/ftp_product_images/{image}"} if image else None
     data = {
         "sku": sku,
         "regular_price": regular_price,
@@ -132,7 +133,10 @@ def create_product_variation(
         "attributes": attributes_it,
         "description": description_it,
     }
+    print("product_id")
+    print(product_id)
     italian_variation = wcapi.post(f"products/{str(product_id)}/variations", data).json()
+    print(italian_variation)
     add_vpc_config(configurator_it, configurator_page_it, product_id, italian_variation["id"])
     logging.info("italian_variation")
     logging.info(italian_variation)

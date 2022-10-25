@@ -18,7 +18,7 @@ CREATE TABLE products(
     description_en TEXT NOT NULL,
     short_description_it TEXT NOT NULL,
     short_description_en TEXT NOT NULL,
-    in_sync BOOLEAN,
+    in_sync BOOLEAN default 0,
     PRIMARY KEY (id_sam_erp)
 );
 
@@ -41,10 +41,10 @@ CREATE TABLE variations(
     color_it VARCHAR(64),
     color_en VARCHAR(64),
     dimensions VARCHAR(64),
-    length_ SMALLINT,
-    width SMALLINT,
-    height SMALLINT,
-    in_sync BOOLEAN,
+    length_ FLOAT,
+    width FLOAT,
+    height FLOAT,
+    in_sync BOOLEAN default 0,
     is_active BOOLEAN,
     PRIMARY KEY (sku)
 );

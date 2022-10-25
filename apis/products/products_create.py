@@ -38,7 +38,8 @@ def create_parent_products():
                     "options": product_attributes["colors_it"],
                 },
             ],
-            images=product["gallery"],
+            cover_image=product["cover_image"],
+            gallery_images=product["gallery"],
             meta_it=[{"key": "_yoast_wpseo_metadesc", "value": product["meta_description_it"]}],
             meta_en=[{"key": "_yoast_wpseo_metadesc", "value": product["meta_description_en"]}],
         )

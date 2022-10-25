@@ -4,7 +4,7 @@ import logging
 
 def get_products_out_of_sync(new_only: bool, is_variation: bool) -> list:
     table = "variations" if is_variation else "products"
-    query_for_new = "AND id_wp=0" if new_only else ""
+    query_for_new = "AND id_wp IS NULL" if new_only else ""
     query = f"""
         SELECT 
             * 
