@@ -4,6 +4,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from apis.sql import query_sync_db
 import itertools
 from slugify import slugify
+from utils import print_name
 from attributes.attributes_wp_apis import *
 from typing import List
 
@@ -13,24 +14,20 @@ def get_out_of_sync_product_attributes() -> List[str]:
         SELECT 
             dimensions, color_it, color_en 
         FROM 
-            variations 
-        WHERE 
-            in_sync=0
+            variations
     """
     attributes = query_sync_db(query, True)
     dimensions_options = []
-    colors_options_it = []
-    colors_options_en = []
+    colors_options = []
     for attribute in attributes:
         dimensions_options.append(attribute["dimensions"])
-        colors_options_it.append(attribute["color_it"])
-        colors_options_en.append(attribute["color_en"])
-    return list(set(dimensions_options)), list(set(colors_options_it)), list(set(colors_options_en))
+        colors_options.append((attribute["color_it"], attribute["color_en"]))
+    return list(set(dimensions_options)), list(set(colors_options))
 
 
-def create_attributes_terms(
-    dimensions_options: List[str], colors_options_it: List[str], colors_options_en: List[str]
-):
+def create_attributes_terms(dimensions_options: List[str], colors_options: List[tuple]):
+    colors_options_it = [color[0] for color in colors_options]
+    colors_options_en = [color[1] for color in colors_options]
     create_dimensions_attribute_terms(dimensions_options)
     create_colors_attribute_terms(colors_options_it, colors_options_en)
 
@@ -56,6 +53,7 @@ def get_non_existing_attributes(options: List[str], attribute_id: int) -> List[d
     return return_list
 
 
+@print_name
 def create_attributes():
-    dimensions_options, colors_options_it, colors_options_en = get_out_of_sync_product_attributes()
-    create_attributes_terms(dimensions_options, colors_options_it, colors_options_en)
+    dimensions_options, colors_options = get_out_of_sync_product_attributes()
+    create_attributes_terms(dimensions_options, colors_options)

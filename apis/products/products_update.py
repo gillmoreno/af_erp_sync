@@ -4,7 +4,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from apis.sql import query_sync_db
 from slugify import slugify
 from utils import print_name
-from products.products_wp_apis import update_product, update_product_variation
+from products.products_wp_apis import *
+from products.products__common import *
 from apis.db_queries import get_products_out_of_sync
 import logging
 
@@ -51,6 +52,23 @@ def update_variations():
     if not variations_to_update:
         logging.info("--> NO VARIATIONS TO UPDATE\n...\n")
     for variation in variations_to_update:
+        product_attributes = get_product_attributes(variation["id_parent_sam_erp"])
+        parent_product_attributes = [
+            {
+                "id": 2,
+                "variation": True,
+                "visible": True,
+                "options": product_attributes["dimensions"],
+            },
+            {
+                "id": 3,
+                "variation": True,
+                "visible": True,
+                "options": product_attributes["colors_it"],
+            },
+        ]
+        product_id = get_product_wp_id(variation["id_parent_sam_erp"])
+        simple_update_product(product_id, {"attributes": parent_product_attributes})
         update_product_variation(
             product_id=get_wp_variation_id(variation["id_parent_sam_erp"])["id_wp"],
             product_id_en=get_wp_variation_id(variation["id_parent_sam_erp"])["id_wp_en"],

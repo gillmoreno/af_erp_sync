@@ -2,6 +2,7 @@ import os, sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from apis.auth import wcapi
+from utils import print_name
 import logging
 
 
@@ -15,7 +16,6 @@ def create_product(
     categories: list,  # list of dicts
     cover_image: str,
     gallery_images: str,
-    attributes: list,
     meta_it: list = [],
     meta_en: list = [],
 ) -> dict:
@@ -26,11 +26,10 @@ def create_product(
         "short_description": short_description_it,
         "categories": categories,
         "images": create_images_array(cover_image, gallery_images),
-        "attributes": attributes,
         "meta_data": meta_it,
     }
     italian_product = wcapi.post("products", data).json()
-    logging.info(italian_product)
+    logging.info(f"italian_product ID -> {str(italian_product['id'])}")
     data_en = {
         "name": title_en,
         "description": description_en,
@@ -40,7 +39,7 @@ def create_product(
         "translation_of": italian_product["id"],
     }
     english_product = wcapi.post("products", data_en).json()
-    logging.info(english_product)
+    logging.info(f"english_product ID -> {str(english_product['id'])}")
     return {
         "italian_id": italian_product["id"],
         "english_id": english_product["id"],
@@ -64,7 +63,8 @@ def retrieve_product(product_id: int) -> dict:
 
 
 def simple_update_product(product_id: int, data: dict):
-    logging.info(wcapi.put(f"products/{str(product_id)}", data).json())
+    updated_product = wcapi.put(f"products/{str(product_id)}", data).json()
+    logging.info(f"updated_product ID -> {str(updated_product['id'])}")
 
 
 def update_product(
@@ -79,7 +79,6 @@ def update_product(
     categories: list,  # list of dicts
     cover_image: str,
     gallery_images: str,
-    # attributes: list,
     meta_it: list = [],
     meta_en: list = [],
 ) -> None:
@@ -92,7 +91,8 @@ def update_product(
         # "attributes": attributes,
         "meta_data": meta_it,
     }
-    logging.info(wcapi.put(f"products/{str(product_id)}", data).json())
+    updated_product = wcapi.put(f"products/{str(product_id)}", data).json()
+    logging.info(f"updated_product ID -> {str(updated_product['id'])}")
     data_en = {
         "name": title_en,
         "description": description_en,
@@ -101,7 +101,8 @@ def update_product(
         "lang": "en",
         "translation_of": f"products/{str(product_id)}",
     }
-    logging.info(wcapi.put(f"products/{str(product_id_en)}", data_en).json())
+    updated_product = wcapi.put(f"products/{str(product_id_en)}", data_en).json()
+    logging.info(f"updated_product ID -> {str(updated_product['id'])}")
 
 
 def delete_product(product_id: int) -> None:
@@ -135,13 +136,10 @@ def create_product_variation(
         "attributes": attributes_it,
         "description": description_it,
     }
-    print("product_id")
-    print(product_id)
+    logging.info(f"product_id {str(product_id)}")
     italian_variation = wcapi.post(f"products/{str(product_id)}/variations", data).json()
-    print(italian_variation)
+    logging.info(f"italian_variation ID -> {str(italian_variation['id'])}")
     add_vpc_config(configurator_it, configurator_page_it, product_id, italian_variation["id"])
-    logging.info("italian_variation")
-    logging.info(italian_variation)
     data_en = {
         "lang": "en",
         "translation_of": italian_variation["id"],
@@ -149,8 +147,7 @@ def create_product_variation(
         "description": description_en,
     }
     english_variation = wcapi.post(f"products/{str(product_id+1)}/variations", data_en).json()
-    logging.info("english_variation")
-    logging.info(english_variation)
+    logging.info(f"english_variation ID -> {str(english_variation['id'])}")
     add_vpc_config(
         configurator_en, configurator_page_en, product_id + 1, english_variation["id"] + 1
     )
@@ -181,7 +178,7 @@ def update_product_variation(
     is_active: bool,
 ) -> None:
     """Attributes must be created beforehand"""
-    image = {"src": image} if image else None
+    image = {"src": f"https://dev.arturofacchini.it/ftp_product_images/{image}"} if image else None
     data = {
         "sku": sku,
         "regular_price": regular_price,
@@ -192,9 +189,10 @@ def update_product_variation(
         "description": description_it,
         "status": "publish" if is_active else "draft",
     }
-    logging.info(
-        wcapi.put(f"products/{str(product_id)}/variations/{str(variation_id)}", data).json()
-    )
+    updated_variation = wcapi.put(
+        f"products/{str(product_id)}/variations/{str(variation_id)}", data
+    ).json()
+    logging.info(f"updated_variation -> {str(updated_variation['id'])}")
     add_vpc_config(configurator_it, configurator_page_it, product_id, variation_id)
     data_en = {
         "lang": "en",
@@ -202,11 +200,10 @@ def update_product_variation(
         "attributes": attributes_en,
         "description": description_en,
     }
-    logging.info(
-        wcapi.put(
-            f"products/{str(product_id_en)}/variations/{str(variation_id_en)}", data_en
-        ).json()
-    )
+    updated_variation_en = wcapi.put(
+        f"products/{str(product_id_en)}/variations/{str(variation_id_en)}", data_en
+    ).json()
+    logging.info(f"updated_variation_en ID -> {str(updated_variation_en['id'])}")
     add_vpc_config(configurator_en, configurator_page_en, product_id_en, variation_id_en)
 
 

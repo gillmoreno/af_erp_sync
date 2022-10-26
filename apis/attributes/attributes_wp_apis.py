@@ -33,4 +33,5 @@ def translate_attribute_term(
         "slug": slug,
         "lang": lang,
     }
-    logging.info(wcapi.post(f"products/attributes/{str(attribute_id)}/terms", data).json())
+    attribute = wcapi.post(f"products/attributes/{str(attribute_id)}/terms", data).json()
+    logging.info(f"attribute slug -> {attribute['slug']}")
