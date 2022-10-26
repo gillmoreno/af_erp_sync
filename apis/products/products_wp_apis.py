@@ -112,6 +112,7 @@ def create_product_variation(
     product_id: int,
     sku: str,
     regular_price: str,
+    sale_price: str,
     image: dict,
     dimensions: dict,
     attributes_it: list,
@@ -128,6 +129,7 @@ def create_product_variation(
     data = {
         "sku": sku,
         "regular_price": regular_price,
+        "sale_price": sale_price,
         "image": image,
         "dimensions": dimensions,
         "attributes": attributes_it,
@@ -165,6 +167,7 @@ def update_product_variation(
     variation_id_en: int,
     sku: str,
     regular_price: str,
+    sale_price: str,
     image: dict,
     dimensions: dict,
     attributes_it: list,
@@ -182,6 +185,7 @@ def update_product_variation(
     data = {
         "sku": sku,
         "regular_price": regular_price,
+        "sale_price": sale_price,
         "image": image,
         "dimensions": dimensions,
         "attributes": attributes_it,

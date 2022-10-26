@@ -58,7 +58,8 @@ def update_variations():
             variation_id_en=variation["id_wp_en"],
             is_active=variation["is_active"],
             sku=variation["sku"],
-            regular_price=str(variation["price"]),
+            regular_price=str(variation["regular_price"]),
+            sale_price=str(variation["sale_price"]),
             image=variation["image_"],
             dimensions={
                 "length": str(variation["length_"]),

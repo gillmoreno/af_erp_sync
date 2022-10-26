@@ -87,7 +87,8 @@ def create_variations():
         wp_variation = create_product_variation(
             product_id=product_id,
             sku=variation["sku"],
-            regular_price=str(variation["price"]),
+            regular_price=str(variation["regular_price"]),
+            sale_price=str(variation["sale_price"]),
             image=variation["image_"],
             dimensions={
                 "length": str(variation["length_"]),
