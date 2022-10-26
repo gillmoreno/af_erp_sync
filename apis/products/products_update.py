@@ -47,6 +47,7 @@ def sync_updated_product(id_sam_erp: str) -> None:
     query_sync_db(query, False, True)
 
 
+@print_name
 def update_variations():
     variations_to_update = get_products_out_of_sync(False, True)
     if not variations_to_update:
@@ -67,11 +68,11 @@ def update_variations():
                 "options": product_attributes["colors_it"],
             },
         ]
-        product_id = get_product_wp_id(variation["id_parent_sam_erp"])
+        product_id, product_id_en = get_product_wp_id(variation["id_parent_sam_erp"])
         simple_update_product(product_id, {"attributes": parent_product_attributes})
-        update_product_variation(
-            product_id=get_wp_variation_id(variation["id_parent_sam_erp"])["id_wp"],
-            product_id_en=get_wp_variation_id(variation["id_parent_sam_erp"])["id_wp_en"],
+        create_or_update_product_variation(
+            product_id=product_id,
+            product_id_en=product_id_en,
             variation_id=variation["id_wp"],
             variation_id_en=variation["id_wp_en"],
             is_active=variation["is_active"],
@@ -100,18 +101,6 @@ def update_variations():
             description_en=variation["description_en"],
         )
         sync_updated_variation(variation["sku"])
-
-
-def get_wp_variation_id(id_sam_erp: str) -> None:
-    query = f"""
-        SELECT
-            id_wp, id_wp_en
-        FROM
-            products
-        WHERE
-            id_sam_erp='{id_sam_erp}'
-    """
-    return query_sync_db(query, True)[0]
 
 
 def sync_updated_variation(sku: str) -> None:

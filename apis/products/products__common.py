@@ -24,10 +24,11 @@ def get_product_attributes(id_parent_sam_erp: str) -> dict:
 def get_product_wp_id(id_parent_sam_erp: str) -> int:
     query = f"""
         SELECT
-            id_wp
+            id_wp, id_wp_en
         FROM
             products
         WHERE
             id_sam_erp='{id_parent_sam_erp}'
     """
-    return query_sync_db(query=query)[0][0]
+    result = query_sync_db(query=query)[0]
+    return result[0], result[1]

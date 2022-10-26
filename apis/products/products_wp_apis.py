@@ -157,11 +157,9 @@ def create_product_variation(
     }
 
 
-def update_product_variation(
+def create_or_update_product_variation(
     product_id: int,
     product_id_en: int,
-    variation_id: int,
-    variation_id_en: int,
     sku: str,
     regular_price: str,
     sale_price: str,
@@ -175,7 +173,9 @@ def update_product_variation(
     configurator_page_en: int,
     description_it: str,
     description_en: str,
-    is_active: bool,
+    is_active: bool = True,
+    variation_id: int = None,
+    variation_id_en: int = None,
 ) -> None:
     """Attributes must be created beforehand"""
     image = {"src": f"https://dev.arturofacchini.it/ftp_product_images/{image}"} if image else None
@@ -189,10 +189,15 @@ def update_product_variation(
         "description": description_it,
         "status": "publish" if is_active else "draft",
     }
-    updated_variation = wcapi.put(
-        f"products/{str(product_id)}/variations/{str(variation_id)}", data
-    ).json()
-    logging.info(f"updated_variation -> {str(updated_variation['id'])}")
+
+    if variation_id:
+        response = wcapi.put(
+            f"products/{str(product_id)}/variations/{str(variation_id)}", data
+        ).json()
+    else:
+        response = wcapi.post(f"products/{str(product_id)}/variations", data).json()
+        variation_id = response["id"]
+    logging.info(f"updated_variation -> {str(variation_id)}")
     add_vpc_config(configurator_it, configurator_page_it, product_id, variation_id)
     data_en = {
         "lang": "en",
@@ -200,11 +205,20 @@ def update_product_variation(
         "attributes": attributes_en,
         "description": description_en,
     }
-    updated_variation_en = wcapi.put(
-        f"products/{str(product_id_en)}/variations/{str(variation_id_en)}", data_en
-    ).json()
-    logging.info(f"updated_variation_en ID -> {str(updated_variation_en['id'])}")
+
+    if variation_id_en:
+        response = wcapi.put(
+            f"products/{str(product_id_en)}/variations/{str(variation_id_en)}", data_en
+        ).json()
+    else:
+        response = wcapi.post(f"products/{str(product_id_en)}/variations", data_en).json()
+        variation_id_en = response["id"] + 1
+    logging.info(f"updated_variation_en ID -> {variation_id_en}")
     add_vpc_config(configurator_en, configurator_page_en, product_id_en, variation_id_en)
+    return {
+        "italian_id": variation_id,
+        "english_id": variation_id_en,
+    }
 
 
 def add_vpc_config(

@@ -67,10 +67,11 @@ def create_variations():
                 "options": product_attributes["colors_it"],
             },
         ]
-        product_id = get_product_wp_id(variation["id_parent_sam_erp"])
+        product_id, product_id_en = get_product_wp_id(variation["id_parent_sam_erp"])
         simple_update_product(product_id, {"attributes": parent_product_attributes})
-        wp_variation = create_product_variation(
+        wp_variation = create_or_update_product_variation(
             product_id=product_id,
+            product_id_en=product_id_en,
             sku=variation["sku"],
             regular_price=str(variation["regular_price"]),
             sale_price=str(variation["sale_price"]),
