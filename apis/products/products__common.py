@@ -32,3 +32,12 @@ def get_product_wp_id(id_parent_sam_erp: str) -> int:
     """
     result = query_sync_db(query=query)[0]
     return result[0], result[1]
+
+
+def tag_list(tags: str) -> list:
+    if tags:
+        tags = tags.replace(" ", "")
+        tags = tags.split(",")
+        return [{"id": tag} for tag in tags]
+    else:
+        return []

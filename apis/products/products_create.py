@@ -16,7 +16,7 @@ def create_parent_products():
     if not products_to_create:
         logging.info("--> NO PRODUCTS TO CREATE\n...\n")
     for product in products_to_create:
-        wp_product = create_product(
+        wp_product = create_or_update_product(
             title_it=product["title_it"],
             title_en=product["title_en"],
             description_it=product["description_it"],
@@ -24,6 +24,7 @@ def create_parent_products():
             short_description_it=product["short_description_it"],
             short_description_en=product["short_description_en"],
             categories=[{"id": product["category"]}],
+            tags=tag_list(product["tags"]),
             cover_image=product["cover_image"],
             gallery_images=product["gallery"],
             meta_it=[{"key": "_yoast_wpseo_metadesc", "value": product["meta_description_it"]}],

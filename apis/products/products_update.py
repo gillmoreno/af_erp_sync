@@ -16,7 +16,7 @@ def update_products():
     if not products_to_update:
         logging.info("--> NO PRODUCTS TO UPDATE\n...\n")
     for product in products_to_update:
-        update_product(
+        create_or_update_product(
             product_id=product["id_wp"],
             product_id_en=product["id_wp_en"],
             title_it=product["title_it"],
@@ -26,9 +26,9 @@ def update_products():
             short_description_it=product["short_description_it"],
             short_description_en=product["short_description_en"],
             categories=[{"id": product["category"]}],
+            tags=tag_list(product["tags"]),
             cover_image=product["cover_image"],
             gallery_images=product["gallery"],
-            # attributes=product['attributes'],
             meta_it=[{"key": "_yoast_wpseo_metadesc", "value": product["meta_description_it"]}],
             meta_en=[{"key": "_yoast_wpseo_metadesc", "value": product["meta_description_en"]}],
         )
