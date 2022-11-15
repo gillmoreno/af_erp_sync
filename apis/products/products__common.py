@@ -7,17 +7,25 @@ from apis.sql import query_sync_db
 def get_product_attributes(id_parent_sam_erp: str) -> dict:
     query = f"""
         SELECT 
-            dimensions, color_it 
+            vc.value_it, vd.value_
         FROM 
-            variations 
+            variations as v
+        INNER JOIN 
+            variation_colors as vc
+        ON 
+            vc.id_sam_erp = v.variation_colors_id
+        INNER JOIN 
+            variation_dimensions as vd
+        ON 
+            vd.id_sam_erp = v.variation_dimensions_id
         WHERE 
-            id_parent_sam_erp='{id_parent_sam_erp}';
+            v.id_parent_sam_erp = '{id_parent_sam_erp}';
     """
     result = query_sync_db(query, True)
     return_dict = {"dimensions": [], "colors_it": []}
     for option in result:
-        return_dict["dimensions"].append(option["dimensions"])
-        return_dict["colors_it"].append(option["color_it"])
+        return_dict["dimensions"].append(option["value_"])
+        return_dict["colors_it"].append(option["value_it"])
     return return_dict
 
 

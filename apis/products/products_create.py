@@ -53,6 +53,8 @@ def create_variations():
     if not variations_to_create:
         logging.info("--> NO VARIATIONS TO CREATE\n...\n")
     for variation in variations_to_create:
+        dimensions = get_dimensions(variation["variation_dimensions_id"])
+        colors = get_colors(variation["variation_colors_id"])
         product_attributes = get_product_attributes(variation["id_parent_sam_erp"])
         parent_product_attributes = [
             {
@@ -83,12 +85,12 @@ def create_variations():
                 "height": str(variation["height"]),
             },
             attributes_it=[
-                {"id": 2, "option": slugify(variation["dimensions"])},
-                {"id": 3, "option": slugify(variation["color_it"])},
+                {"id": 2, "option": slugify(dimensions)},
+                {"id": 3, "option": slugify(colors["value_it"])},
             ],
             attributes_en=[
-                {"id": 2, "option": slugify(f"{variation['dimensions']}-en")},
-                {"id": 3, "option": slugify(f"{variation['color_en']}-en")},
+                {"id": 2, "option": slugify(f"{dimensions}-en")},
+                {"id": 3, "option": slugify(f"{colors['value_it']}-en")},
             ],
             description_it=variation["description_it"],
             description_en=variation["description_en"],
@@ -98,6 +100,30 @@ def create_variations():
             configurator_page_en=variation["configurator_page_en"],
         )
         sync_new_variation(variation["sku"], wp_variation)
+
+
+def get_dimensions(id_sam_erp: str) -> str:
+    query = f"""
+        SELECT 
+            value_
+        FROM 
+            variation_dimensions
+        WHERE
+            id_sam_erp='{id_sam_erp}'
+    """
+    return query_sync_db(query, True)[0]["value_"]
+
+
+def get_colors(id_sam_erp: str) -> dict:
+    query = f"""
+        SELECT 
+            value_it, value_en
+        FROM 
+            variation_colors
+        WHERE
+            id_sam_erp='{id_sam_erp}'
+    """
+    return query_sync_db(query, True)[0]
 
 
 def sync_new_variation(sku: str, wp_variation: dict):
