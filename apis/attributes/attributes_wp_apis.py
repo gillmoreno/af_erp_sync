@@ -18,6 +18,7 @@ def create_attribute_term(attribute_id: int, option_it: str, option_en: str):
     data = {"name": option_it, "slug": slugify(option_it)}
     term = wcapi.post(f"products/attributes/{str(attribute_id)}/terms", data).json()
     translate_attribute_term(attribute_id, term["id"], option_en, slugify(option_en + "-en"))
+    return term["id"]
 
 
 def translate_attribute_term(

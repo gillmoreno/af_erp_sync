@@ -12,45 +12,52 @@ from typing import List
 def get_out_of_sync_product_attributes() -> List[str]:
     query = """
         SELECT 
-            dimensions, color_it, color_en 
+            id_sam_erp, value_
         FROM 
-            variations
+            variation_dimensions
+        WHERE
+            id_wp is NULL
     """
-    attributes = query_sync_db(query, True)
-    dimensions_options = []
-    colors_options = []
-    for attribute in attributes:
-        dimensions_options.append(attribute["dimensions"])
-        colors_options.append((attribute["color_it"], attribute["color_en"]))
-    return list(set(dimensions_options)), list(set(colors_options))
+    variation_dimensions = query_sync_db(query, True)
+    query = """
+        SELECT 
+            id_sam_erp, value_it, value_en
+        FROM 
+            variation_colors
+        WHERE
+            id_wp is NULL
+    """
+    variation_colors = query_sync_db(query, True)
+    return (variation_dimensions, variation_colors)
 
 
-def create_attributes_terms(dimensions_options: List[str], colors_options: List[tuple]):
-    colors_options_it = [color[0] for color in colors_options]
-    colors_options_en = [color[1] for color in colors_options]
+def create_attributes_terms(dimensions_options: List[dict], colors_options: List[dict]):
+    create_colors_attribute_terms(colors_options)
     create_dimensions_attribute_terms(dimensions_options)
-    create_colors_attribute_terms(colors_options_it, colors_options_en)
 
 
-def create_dimensions_attribute_terms(dimensions_options: List[str]):
-    non_existing_dimensions = get_non_existing_attributes(dimensions_options, 2)
-    for dimensions in non_existing_dimensions:
-        create_attribute_term(2, dimensions["value"], dimensions["value"])
+def create_colors_attribute_terms(colors_options: List[dict]):
+    for color in colors_options:
+        color_id = create_attribute_term(3, color["value_it"], color["value_en"])
+        sync_new_attribute("variation_colors", color["id_sam_erp"], color_id)
 
 
-def create_colors_attribute_terms(colors_options_it: List[str], colors_options_en: List[str]):
-    non_existing_colors = get_non_existing_attributes(colors_options_it, 3)
-    for color in non_existing_colors:
-        create_attribute_term(3, color["value"], colors_options_en[color["index"]])
+def create_dimensions_attribute_terms(dimensions_options: List[dict]):
+    for dimensions in dimensions_options:
+        dimensions_id = create_attribute_term(2, dimensions["value_"], dimensions["value_"])
+        sync_new_attribute("variation_dimensions", dimensions["id_sam_erp"], dimensions_id)
 
 
-def get_non_existing_attributes(options: List[str], attribute_id: int) -> List[dict]:
-    return_list = []
-    for i, option in enumerate(options):
-        slug = slugify(option)
-        if not search_attribute_by_slug(attribute_id, slug):
-            return_list.append({"index": i, "value": option})
-    return return_list
+def sync_new_attribute(table: str, id_sam_erp: str, id_wp: int):
+    query = f"""
+        UPDATE 
+            {table}
+        SET 
+            id_wp={str(id_wp)}
+        WHERE 
+            id_sam_erp='{id_sam_erp}';
+    """
+    query_sync_db(query, False, True)
 
 
 @print_name
