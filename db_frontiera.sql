@@ -39,9 +39,8 @@ CREATE TABLE variations(
     regular_price FLOAT NOT NULL,
     sale_price FLOAT,
     image_ VARCHAR(256),
-    color_it VARCHAR(64),
-    color_en VARCHAR(64),
-    dimensions VARCHAR(64),
+    variation_color_id VARCHAR(32),
+    variation_dimension_id VARCHAR(32),
     length_ FLOAT,
     width FLOAT,
     height FLOAT,
@@ -147,4 +146,34 @@ CREATE TABLE order_products(
     cliche_position VARCHAR(8),
     PRIMARY KEY (id),
     UNIQUE KEY unique_together (order_id_wp, sku)
+);
+
+CREATE TABLE variation_colors (
+    id_sam_erp VARCHAR(32) NOT NULL,
+    id_wp INT,
+    value_it VARCHAR(128),
+    value_en VARCHAR(128),
+    PRIMARY KEY (id_sam_erp)
+);
+
+CREATE TABLE variation_dimensions (
+    id_sam_erp VARCHAR(32) NOT NULL,
+    id_wp INT,
+    value_ VARCHAR(128),
+    PRIMARY KEY (id_sam_erp)
+);
+
+CREATE TABLE product_brands (
+    id_sam_erp VARCHAR(32) NOT NULL,
+    id_wp INT,
+    value_ VARCHAR(128),
+    PRIMARY KEY (id_sam_erp)
+);
+
+CREATE TABLE product_tags (
+    id_sam_erp VARCHAR(32) NOT NULL,
+    id_wp INT,
+    value_it VARCHAR(64),
+    value_en VARCHAR(64),
+    PRIMARY KEY (id_sam_erp)
 );
