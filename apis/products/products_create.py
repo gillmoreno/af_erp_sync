@@ -90,7 +90,7 @@ def create_variations():
             ],
             attributes_en=[
                 {"id": 2, "option": slugify(f"{dimensions}-en")},
-                {"id": 3, "option": slugify(f"{colors['value_it']}-en")},
+                {"id": 3, "option": slugify(f"{colors['value_en']}-en")},
             ],
             description_it=variation["description_it"],
             description_en=variation["description_en"],
@@ -100,30 +100,6 @@ def create_variations():
             configurator_page_en=variation["configurator_page_en"],
         )
         sync_new_variation(variation["sku"], wp_variation)
-
-
-def get_dimensions(id_sam_erp: str) -> str:
-    query = f"""
-        SELECT 
-            value_
-        FROM 
-            variation_dimensions
-        WHERE
-            id_sam_erp='{id_sam_erp}'
-    """
-    return query_sync_db(query, True)[0]["value_"]
-
-
-def get_colors(id_sam_erp: str) -> dict:
-    query = f"""
-        SELECT 
-            value_it, value_en
-        FROM 
-            variation_colors
-        WHERE
-            id_sam_erp='{id_sam_erp}'
-    """
-    return query_sync_db(query, True)[0]
 
 
 def sync_new_variation(sku: str, wp_variation: dict):

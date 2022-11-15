@@ -49,3 +49,27 @@ def tag_list(tags: str) -> list:
         return [{"id": tag} for tag in tags]
     else:
         return []
+
+
+def get_dimensions(id_sam_erp: str) -> str:
+    query = f"""
+        SELECT 
+            value_
+        FROM 
+            variation_dimensions
+        WHERE
+            id_sam_erp='{id_sam_erp}'
+    """
+    return query_sync_db(query, True)[0]["value_"]
+
+
+def get_colors(id_sam_erp: str) -> dict:
+    query = f"""
+        SELECT 
+            value_it, value_en
+        FROM 
+            variation_colors
+        WHERE
+            id_sam_erp='{id_sam_erp}'
+    """
+    return query_sync_db(query, True)[0]

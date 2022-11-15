@@ -53,6 +53,8 @@ def update_variations():
     if not variations_to_update:
         logging.info("--> NO VARIATIONS TO UPDATE\n...\n")
     for variation in variations_to_update:
+        dimensions = get_dimensions(variation["variation_dimensions_id"])
+        colors = get_colors(variation["variation_colors_id"])
         product_attributes = get_product_attributes(variation["id_parent_sam_erp"])
         parent_product_attributes = [
             {
@@ -86,12 +88,12 @@ def update_variations():
                 "height": str(variation["height"]),
             },
             attributes_it=[
-                {"id": 2, "option": slugify(variation["dimensions"])},
-                {"id": 3, "option": slugify(variation["color_it"])},
+                {"id": 2, "option": slugify(dimensions)},
+                {"id": 3, "option": slugify(colors["value_it"])},
             ],
             attributes_en=[
-                {"id": 2, "option": slugify(f"{variation['dimensions']}-en")},
-                {"id": 3, "option": slugify(f"{variation['color_en']}-en")},
+                {"id": 2, "option": slugify(f"{dimensions}-en")},
+                {"id": 3, "option": slugify(f"{colors['value_en']}-en")},
             ],
             configurator_it=variation["configurator_it"],
             configurator_page_it=variation["configurator_page_it"],
