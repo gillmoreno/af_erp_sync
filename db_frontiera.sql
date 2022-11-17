@@ -10,6 +10,7 @@ CREATE TABLE products(
     title_en VARCHAR(64) NOT NULL,
     category VARCHAR(64) NOT NULL,
     tags VARCHAR(64),
+    product_brand_id VARCHAR(32),
     meta_description_it VARCHAR(256) NOT NULL,
     meta_description_en VARCHAR(256) NOT NULL,
     cover_image VARCHAR(256) NOT NULL,
@@ -165,7 +166,8 @@ CREATE TABLE variation_dimensions (
 
 CREATE TABLE product_brands (
     id_sam_erp VARCHAR(32) NOT NULL,
-    id_wp INT,
+    id_wp_it INT,
+    id_wp_en INT,
     value_ VARCHAR(128),
     PRIMARY KEY (id_sam_erp)
 );

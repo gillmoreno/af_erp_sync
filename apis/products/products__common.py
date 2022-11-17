@@ -73,3 +73,15 @@ def get_colors(id_sam_erp: str) -> dict:
             id_sam_erp='{id_sam_erp}'
     """
     return query_sync_db(query, True)[0]
+
+
+def get_product_brand(id_sam_erp: str) -> int:
+    query = f"""
+        SELECT 
+            id_wp, value_
+        FROM 
+            product_brands
+        WHERE
+            id_sam_erp='{id_sam_erp}'
+    """
+    return query_sync_db(query, True)[0]

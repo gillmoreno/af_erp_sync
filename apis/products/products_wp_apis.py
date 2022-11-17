@@ -2,7 +2,9 @@ import os, sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from apis.auth import wcapi
+from apis.sql import query_sync_db
 import logging
+import requests
 
 
 def create_or_update_product(
@@ -144,6 +146,30 @@ def create_or_update_product_variation(
         "italian_id": variation_id,
         "english_id": variation_id_en,
     }
+
+
+def create_product_brand(product_id: int, brand_name: str, id_sam_erp: str):
+    url = f"http://dev.arturofacchini.it//wp-json/wc/v3/create-brand?product_id={str(product_id)}&brand_name={brand_name}"
+    product_brand = requests.request("GET", url)
+    sync_product_brand(id_sam_erp, product_brand.json()[0]["term_id"])
+    return product_brand
+
+
+def relate_product_brand(product_id: int, brand_id: int):
+    url = f"http://dev.arturofacchini.it//wp-json/wc/v3/relate-brand?product_id={str(product_id)}&brand_id={str(brand_id)}"
+    requests.request("GET", url)
+
+
+def sync_product_brand(id_sam_erp: str, id_wp: int):
+    query = f"""
+        UPDATE 
+            product_brands 
+        SET 
+            id_wp={str(id_wp)}
+        WHERE 
+            id_sam_erp='{id_sam_erp}';
+    """
+    query_sync_db(query, False, True)
 
 
 def add_vpc_config(

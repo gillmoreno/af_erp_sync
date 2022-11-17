@@ -30,6 +30,13 @@ def create_parent_products():
             meta_it=[{"key": "_yoast_wpseo_metadesc", "value": product["meta_description_it"]}],
             meta_en=[{"key": "_yoast_wpseo_metadesc", "value": product["meta_description_en"]}],
         )
+        product_brand = get_product_brand(product["product_brand_id"])
+        if product_brand["id_wp"]:
+            relate_product_brand(wp_product["italian_id"], product_brand["id_wp"])
+        else:
+            create_product_brand(
+                wp_product["italian_id"], product_brand["value_"], product["product_brand_id"]
+            )
         sync_new_product(product["id_sam_erp"], wp_product)
 
 
