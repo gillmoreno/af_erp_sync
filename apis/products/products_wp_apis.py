@@ -160,6 +160,16 @@ def relate_product_brand(product_id: int, brand_id: int):
     requests.request("GET", url)
 
 
+def create_product_tag_color(product_id: int, color_name_it: str, color_name_en: str):
+    url = f"http://dev.arturofacchini.it//wp-json/wc/v3/create-color?product_id={str(product_id)}&color_name={str(color_name_it)}&color_name_en={str(color_name_en)}"
+    return requests.request("GET", url)
+
+
+def relate_product_tag_color(product_id: int, id_wp: int):
+    url = f"http://dev.arturofacchini.it//wp-json/wc/v3/relate-color?product_id={str(product_id)}&color_id={str(id_wp)}"
+    requests.request("GET", url)
+
+
 def sync_product_brand(id_sam_erp: str, id_wp: int):
     query = f"""
         UPDATE 

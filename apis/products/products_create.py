@@ -106,7 +106,58 @@ def create_variations():
             configurator_en=variation["configurator_en"],
             configurator_page_en=variation["configurator_page_en"],
         )
+        associate_product_tag_color(colors, product_id)
         sync_new_variation(variation["sku"], wp_variation)
+
+
+def associate_product_tag_color(colors: dict, product_id: int):
+    colors_italian, colors_english = get_individual_colors(colors)
+    for i, color in enumerate(colors_italian):
+        product_tag_color = get_product_tag_color(color)
+        if product_tag_color:
+            id_wp = product_tag_color[0]["id_wp"]
+            relate_product_tag_color(product_id, id_wp)
+        else:
+            response = create_product_tag_color(product_id, color, colors_english[i])
+            create_product_tag_color_db_frontiera(
+                response.json()[0]["term_id"], color, colors_english[i]
+            )
+
+
+def get_individual_colors(colors: dict) -> tuple:
+    colors_italian = colors["value_it"].replace(" ", "").split("-")
+    colors_english = colors["value_en"].replace(" ", "").split("-")
+    return colors_italian, colors_english
+
+
+def get_product_tag_color(color: str) -> int:
+    query = f"""
+        SELECT 
+            id_wp 
+        FROM
+            product_tag_colors
+        WHERE
+            value_it='{color}';
+    """
+    return query_sync_db(query, True)
+
+
+def create_product_tag_color_db_frontiera(id_wp: int, color_it: str, color_en: str):
+    query = f"""
+        INSERT INTO 
+            product_tag_colors(
+                id_wp,
+                value_it,
+                value_en
+            ) 
+        VALUES 
+            (
+                {id_wp},
+                '{color_it}',
+                '{color_en}'
+            ); 
+    """
+    query_sync_db(query, False, True)
 
 
 def sync_new_variation(sku: str, wp_variation: dict):

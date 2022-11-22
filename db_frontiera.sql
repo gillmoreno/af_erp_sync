@@ -179,3 +179,10 @@ CREATE TABLE product_tags (
     value_en VARCHAR(64),
     PRIMARY KEY (id_sam_erp)
 );
+
+CREATE TABLE product_tag_colors (
+    id_wp INT NOT NULL,
+    value_it VARCHAR(64) NOT NULL,
+    value_en VARCHAR(64) NOT NULL,
+    PRIMARY KEY (id_wp)
+);
