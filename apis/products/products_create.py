@@ -79,11 +79,25 @@ def create_variations():
         ]
         product_id, product_id_en = get_product_wp_id(variation["id_parent_sam_erp"])
         simple_update_product(product_id, {"attributes": parent_product_attributes})
+        pricelist_dict = get_price_list(variation["sku"])
+        meta_data = [
+            {"key": "pbq_pricing_type_enable", "value": "enable"},
+            {"key": "pbq_pricing_type", "value": "fixed"},
+            {"key": "pbq_table_layout", "value": "hover_table"},
+            {"key": "pbq_min_quantity", "value": variation["quantity_min"]},
+            {"key": "pbq_max_quantity", "value": variation["quantity_max"]},
+        ]
+        meta_data.append(
+            {
+                "key": "pbq_discount_table_data",
+                "value": pricelist_dict["quantity_discounted_prices"],
+            }
+        )
         wp_variation = create_or_update_product_variation(
             product_id=product_id,
             product_id_en=product_id_en,
             sku=variation["sku"],
-            regular_price=str(variation["regular_price"]),
+            regular_price=pricelist_dict["regular_price"],
             sale_price=str(variation["sale_price"]),
             image=variation["image_"],
             dimensions={
@@ -105,6 +119,7 @@ def create_variations():
             configurator_page_it=variation["configurator_page_it"],
             configurator_en=variation["configurator_en"],
             configurator_page_en=variation["configurator_page_en"],
+            meta_data=meta_data,
         )
         associate_product_tag_color(colors, product_id)
         sync_new_variation(variation["sku"], wp_variation)
@@ -172,3 +187,33 @@ def sync_new_variation(sku: str, wp_variation: dict):
             sku='{sku}';
     """
     query_sync_db(query, False, True)
+
+
+def get_price_list(sku: str) -> dict:
+    query = f"""
+        SELECT 
+            quantity, unit_price
+        FROM
+            variation_price_lists
+        WHERE
+            sku='{sku}';
+    """
+    pricelist = query_sync_db(query, True)
+    regular_price = 0
+    quantity_discounted_prices = []
+    for price in pricelist:
+        if price["quantity"] == 1:
+            regular_price = price["unit_price"]
+            break
+    for price in pricelist:
+        if price["quantity"] != 1:
+            quantity_discounted_prices.append(
+                {
+                    "pbq_quantity": price["quantity"],
+                    "pbq_discount": str(round((regular_price - price["unit_price"]), 2)),
+                }
+            )
+    return {
+        "regular_price": str(regular_price),
+        "quantity_discounted_prices": quantity_discounted_prices,
+    }

@@ -100,6 +100,7 @@ def create_or_update_product_variation(
     configurator_page_en: int,
     description_it: str,
     description_en: str,
+    meta_data: dict = {},
     is_active: bool = True,
     variation_id: int = None,
     variation_id_en: int = None,
@@ -115,8 +116,8 @@ def create_or_update_product_variation(
         "attributes": attributes_it,
         "description": description_it,
         "status": "publish" if is_active else "draft",
+        "meta_data": meta_data,
     }
-
     if variation_id:
         response = wcapi.put(
             f"products/{str(product_id)}/variations/{str(variation_id)}", data
@@ -131,8 +132,8 @@ def create_or_update_product_variation(
         "translation_of": variation_id,
         "attributes": attributes_en,
         "description": description_en,
+        "meta_data": meta_data,
     }
-
     if variation_id_en:
         response = wcapi.put(
             f"products/{str(product_id_en)}/variations/{str(variation_id_en)}", data_en
@@ -140,8 +141,9 @@ def create_or_update_product_variation(
     else:
         response = wcapi.post(f"products/{str(product_id_en)}/variations", data_en).json()
         variation_id_en = response["id"] + 1
+        add_vpc_config(configurator_en, configurator_page_en, product_id_en, variation_id_en)
+        wcapi.put(f"products/{str(product_id_en)}/variations/{str(variation_id_en)}", data_en)
     logging.info(f"variation_en ID -> {variation_id_en}")
-    add_vpc_config(configurator_en, configurator_page_en, product_id_en, variation_id_en)
     return {
         "italian_id": variation_id,
         "english_id": variation_id_en,

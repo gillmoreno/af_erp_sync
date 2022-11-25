@@ -34,10 +34,9 @@ CREATE TABLE variations(
     configurator_en INT,
     configurator_page_it INT,
     configurator_page_en INT,
-    quantity_minimum INT,
-    quantity_multiplier INT,
+    quantity_min INT,
+    quantity_max INT,
     stock FLOAT NOT NULL,
-    regular_price FLOAT NOT NULL,
     sale_price FLOAT,
     image_ VARCHAR(256),
     variation_colors_id VARCHAR(32),
@@ -185,4 +184,11 @@ CREATE TABLE product_tag_colors (
     value_it VARCHAR(64) NOT NULL,
     value_en VARCHAR(64) NOT NULL,
     PRIMARY KEY (id_wp)
+);
+
+CREATE TABLE variation_price_lists (
+    sku VARCHAR(32) NOT NULL,
+    quantity INT NOT NULL,
+    unit_price FLOAT NOT NULL,
+    PRIMARY KEY (sku, quantity)
 );
