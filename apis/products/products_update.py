@@ -72,6 +72,17 @@ def update_variations():
         ]
         product_id, product_id_en = get_product_wp_id(variation["id_parent_sam_erp"])
         simple_update_product(product_id, {"attributes": parent_product_attributes})
+        pricelist_dict = get_price_list(variation["sku"])
+        meta_data = [
+            {"key": "pbq_min_quantity", "value": variation["quantity_min"]},
+            {"key": "pbq_max_quantity", "value": variation["quantity_max"]},
+        ]
+        meta_data.append(
+            {
+                "key": "pbq_discount_table_data",
+                "value": pricelist_dict["quantity_discounted_prices"],
+            }
+        )
         create_or_update_product_variation(
             product_id=product_id,
             product_id_en=product_id_en,
@@ -79,7 +90,7 @@ def update_variations():
             variation_id_en=variation["id_wp_en"],
             is_active=variation["is_active"],
             sku=variation["sku"],
-            regular_price=str(variation["regular_price"]),
+            regular_price=pricelist_dict["regular_price"],
             sale_price=str(variation["sale_price"]),
             image=variation["image_"],
             dimensions={
@@ -101,7 +112,9 @@ def update_variations():
             configurator_page_en=variation["configurator_page_en"],
             description_it=variation["description_it"],
             description_en=variation["description_en"],
+            meta_data=meta_data,
         )
+        associate_product_tag_color(colors, product_id)
         sync_updated_variation(variation["sku"])
 
 
