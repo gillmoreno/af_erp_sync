@@ -191,3 +191,9 @@ CREATE TABLE variation_price_lists (
     unit_price FLOAT NOT NULL,
     PRIMARY KEY (sku, quantity)
 );
+
+CREATE TABLE categories (
+    id_wp INT NOT NULL,
+    name_ VARCHAR(64) NOT NULL,
+    PRIMARY KEY (id_wp)
+);
