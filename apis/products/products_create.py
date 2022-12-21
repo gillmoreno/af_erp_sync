@@ -84,8 +84,8 @@ def create_variations():
             {"key": "pbq_pricing_type_enable", "value": "enable"},
             {"key": "pbq_pricing_type", "value": "fixed"},
             {"key": "pbq_table_layout", "value": "hover_table"},
-            {"key": "pbq_min_quantity", "value": variation["quantity_min"]},
-            {"key": "pbq_max_quantity", "value": variation["quantity_max"]},
+            {"key": "_alg_wc_pq_min", "value": variation["quantity_min"]},
+            {"key": "_alg_wc_pq_step", "value": variation["quantity_min"]},
         ]
         meta_data.append(
             {

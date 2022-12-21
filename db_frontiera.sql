@@ -35,7 +35,6 @@ CREATE TABLE variations(
     configurator_page_it INT DEFAULT 78,
     configurator_page_en INT DEFAULT 293,
     quantity_min INT,
-    quantity_max INT,
     stock FLOAT NOT NULL,
     sale_price FLOAT,
     image_ VARCHAR(256),
