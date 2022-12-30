@@ -63,11 +63,13 @@ def create_images_array(cover_image: str, gallery_images: str) -> list:
     return_list = []
     if cover_image:
         return_list.append(
-            {"src": f"https://dev.arturofacchini.it/ftp_product_images/{cover_image}"}
+            {"src": f"https://prod.arturofacchini.it/ftp_product_images/{cover_image}"}
         )
     if gallery_images:
         for image in gallery_images.split(","):
-            return_list.append({"src": f"https://dev.arturofacchini.it/ftp_product_images/{image}"})
+            return_list.append(
+                {"src": f"https://prod.arturofacchini.it/ftp_product_images/{image}"}
+            )
     return return_list
 
 
@@ -106,7 +108,7 @@ def create_or_update_product_variation(
     variation_id_en: int = None,
 ):
     """Attributes must be created beforehand"""
-    image = {"src": f"https://dev.arturofacchini.it/ftp_product_images/{image}"} if image else None
+    image = {"src": f"https://prod.arturofacchini.it/ftp_product_images/{image}"} if image else None
     data = {
         "sku": sku,
         "regular_price": regular_price,
@@ -151,24 +153,24 @@ def create_or_update_product_variation(
 
 
 def create_product_brand(product_id: int, brand_name: str, id_sam_erp: str):
-    url = f"http://dev.arturofacchini.it//wp-json/wc/v3/create-brand?product_id={str(product_id)}&brand_name={brand_name}"
+    url = f"http://prod.arturofacchini.it//wp-json/wc/v3/create-brand?product_id={str(product_id)}&brand_name={brand_name}"
     product_brand = requests.request("GET", url)
     sync_product_brand(id_sam_erp, product_brand.json()[0]["term_id"])
     return product_brand
 
 
 def relate_product_brand(product_id: int, brand_id: int):
-    url = f"http://dev.arturofacchini.it//wp-json/wc/v3/relate-brand?product_id={str(product_id)}&brand_id={str(brand_id)}"
+    url = f"http://prod.arturofacchini.it//wp-json/wc/v3/relate-brand?product_id={str(product_id)}&brand_id={str(brand_id)}"
     requests.request("GET", url)
 
 
 def create_product_tag_color(product_id: int, color_name_it: str, color_name_en: str):
-    url = f"http://dev.arturofacchini.it//wp-json/wc/v3/create-color?product_id={str(product_id)}&color_name={str(color_name_it)}&color_name_en={str(color_name_en)}"
+    url = f"http://prod.arturofacchini.it//wp-json/wc/v3/create-color?product_id={str(product_id)}&color_name={str(color_name_it)}&color_name_en={str(color_name_en)}"
     return requests.request("GET", url)
 
 
 def relate_product_tag_color(product_id: int, id_wp: int):
-    url = f"http://dev.arturofacchini.it//wp-json/wc/v3/relate-color?product_id={str(product_id)}&color_id={str(id_wp)}"
+    url = f"http://prod.arturofacchini.it//wp-json/wc/v3/relate-color?product_id={str(product_id)}&color_id={str(id_wp)}"
     requests.request("GET", url)
 
 

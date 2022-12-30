@@ -28,6 +28,7 @@ def get_out_of_sync_product_attributes() -> List[str]:
             id_wp is NULL
     """
     variation_colors = query_sync_db(query, True)
+    print(variation_colors)
     return (variation_dimensions, variation_colors)
 
 
