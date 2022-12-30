@@ -93,7 +93,7 @@ def get_price_list(sku: str) -> dict:
         SELECT 
             quantity, unit_price
         FROM
-            variation_price_lists
+            variation_pricelists
         WHERE
             sku='{sku}';
     """

@@ -185,7 +185,7 @@ CREATE TABLE product_tag_colors (
     PRIMARY KEY (id_wp)
 );
 
-CREATE TABLE variation_price_lists (
+CREATE TABLE variation_pricelists (
     sku VARCHAR(32) NOT NULL,
     quantity INT NOT NULL,
     unit_price FLOAT NOT NULL,
