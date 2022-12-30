@@ -7,7 +7,7 @@ env_folder = cwd.replace("apis", "")
 load_dotenv(f"{env_folder}/.env")
 
 wcapi = API(
-    url="https://prod.arturofacchini.it",
+    url="https://arturofacchini.it",
     consumer_key=os.environ.get("WP_KEY"),
     consumer_secret=os.environ.get("WP_SECRET"),
     version="wc/v3",
