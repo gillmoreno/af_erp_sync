@@ -5,6 +5,14 @@ from apis.auth import wcapi
 from apis.sql import query_sync_db
 import logging
 import requests
+from dotenv import load_dotenv
+
+cwd = os.getcwd()
+env_folder = cwd.replace("apis/products", "")
+load_dotenv(f"{env_folder}/.env")
+
+https_url = f"https://{os.environ.get('DOMAIN')}"
+http_url = f"http://{os.environ.get('DOMAIN')}"
 
 
 def create_or_update_product(
@@ -149,24 +157,26 @@ def create_or_update_product_variation(
 
 
 def create_product_brand(product_id: int, brand_name: str, id_sam_erp: str):
-    url = f"http://arturofacchini.it//wp-json/wc/v3/create-brand?product_id={str(product_id)}&brand_name={brand_name}"
+    url = f"{http_url}/wp-json/wc/v3/create-brand?product_id={str(product_id)}&brand_name={brand_name}"
     product_brand = requests.request("GET", url)
     sync_product_brand(id_sam_erp, product_brand.json()[0]["term_id"])
     return product_brand
 
 
 def relate_product_brand(product_id: int, brand_id: int):
-    url = f"http://arturofacchini.it//wp-json/wc/v3/relate-brand?product_id={str(product_id)}&brand_id={str(brand_id)}"
+    url = f"{http_url}/wp-json/wc/v3/relate-brand?product_id={str(product_id)}&brand_id={str(brand_id)}"
     requests.request("GET", url)
 
 
 def create_product_tag_color(product_id: int, color_name_it: str, color_name_en: str):
-    url = f"http://arturofacchini.it//wp-json/wc/v3/create-color?product_id={str(product_id)}&color_name={str(color_name_it)}&color_name_en={str(color_name_en)}"
+    url = f"{http_url}/wp-json/wc/v3/create-color?product_id={str(product_id)}&color_name={str(color_name_it)}&color_name_en={str(color_name_en)}"
     return requests.request("GET", url)
 
 
 def relate_product_tag_color(product_id: int, id_wp: int):
-    url = f"http://arturofacchini.it//wp-json/wc/v3/relate-color?product_id={str(product_id)}&color_id={str(id_wp)}"
+    url = (
+        f"{http_url}/wp-json/wc/v3/relate-color?product_id={str(product_id)}&color_id={str(id_wp)}"
+    )
     requests.request("GET", url)
 
 
