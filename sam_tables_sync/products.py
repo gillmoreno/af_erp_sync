@@ -43,7 +43,19 @@ def update_products():
             # short_description_it,
             # short_description_en
         FROM SAM_GENITORI AS s
-        LEFT JOIN products AS p ON s.szCodice = p.id_sam_erp;
+        LEFT JOIN products AS p ON s.szCodice = p.id_sam_erp
+        ON DUPLICATE KEY UPDATE
+            title_it = CONCAT(s.AC2Descr, ' ', s.AC4Descr),
+            title_en = CONCAT(s.AC2Descr, ' ', s.AC4Descr),
+            category = REPLACE(s.AC4Codice, 'W', ''),
+            product_brand_id = s.AC2Codice,
+            # tags = # tags,
+            # meta_descriptiom_it = # meta_descriptiom_it,
+            # meta_descriptiom_en = # meta_descriptiom_en,
+            cover_image = s.ImgPrincipale,
+            gallery = s.ImgGalleria,
+            description_it = s.szDescrizione,
+            description_en = s.szDescrizione;
     """
     query_sync_db(query, True, True)
 

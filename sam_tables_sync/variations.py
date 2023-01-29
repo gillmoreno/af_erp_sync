@@ -1,0 +1,90 @@
+import os, sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from apis.sql import query_sync_db
+
+def update_variations():
+    query = """
+        INSERT INTO variations (
+            id_wp,
+            id_wp_en,
+            in_sync,
+            id_parent_sam_erp,
+            is_active,
+            sku,
+            description_it,
+            description_en,
+            quantity_min,
+            # stock,
+            # sale_price,
+            image_,
+            length_,
+            width,
+            height,
+            variation_colors_id,
+            variation_dimensions_id,
+            configurator_it,
+            configurator_en,
+            configurator_page_it,
+            configurator_page_en
+        )
+        SELECT 
+            v.id_wp,
+            v.id_wp_en,
+            COALESCE(v.in_sync, 0),
+            CONCAT(s.szGEN2, ' | W', s.WEB_CATEGORIA),
+            v.is_active,
+            s.szArticoloID,
+            s.szDescrizione,
+            s.szDescrizione,
+            s.dQuantitaMinima,
+            # s.stock,
+            # s.sale_price,
+            s.szImmagine,
+            s.szLunghezza,
+            s.szLarghezza,
+            s.szAltezza,
+            vc.id_sam_erp,
+            CONCAT(
+                ROUND(s.szLunghezza, 0),
+                'x',
+                ROUND(s.szLarghezza, 0),
+                IF(ROUND(s.szAltezza, 0) > 0, 'x', ''),
+                IF(ROUND(s.szAltezza, 0) > 0, ROUND(s.szAltezza, 0), '')
+            ),
+            s.WEBcfgITA,
+            s.WEBcfgENG,
+            78,
+            293
+        FROM SAM_VARIATIONS AS s
+        LEFT JOIN variations AS v 
+            ON s.szArticoloID = v.sku
+        LEFT JOIN variation_colors as vc 
+            ON vc.id_sam_erp = s.szGEN3
+        ON DUPLICATE KEY UPDATE
+            id_parent_sam_erp = CONCAT(s.szGEN2, ' | W', s.WEB_CATEGORIA),
+            is_active = v.is_active,
+            description_it = s.szDescrizione,
+            description_en = s.szDescrizione,
+            quantity_min = s.dQuantitaMinima,
+            image_ = s.szImmagine,
+            length_ = s.szLunghezza,
+            width = s.szLarghezza,
+            height = s.szAltezza,
+            variation_colors_id = vc.id_sam_erp,
+            variation_dimensions_id = CONCAT(
+                ROUND(s.szLunghezza, 0),
+                'x',
+                ROUND(s.szLarghezza, 0),
+                IF(ROUND(s.szAltezza, 0) > 0, 'x', ''),
+                IF(ROUND(s.szAltezza, 0) > 0, ROUND(s.szAltezza, 0), '')
+            ),
+            configurator_it = s.WEBcfgITA,
+            configurator_en = s.WEBcfgENG,
+            configurator_page_it = 78,
+            configurator_page_en = 293;
+    """
+    query_sync_db(query, True, True)
+
+if "__main__" in __name__:
+    update_variations()
