@@ -1,3 +1,4 @@
+import logging
 import os, sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -39,8 +40,11 @@ def create_attributes_terms(dimensions_options: List[dict], colors_options: List
 
 def create_colors_attribute_terms(colors_options: List[dict]):
     for color in colors_options:
-        color_id = create_attribute_term(3, color["value_it"], color["value_en"])
-        sync_new_attribute("variation_colors", color["id_sam_erp"], color_id)
+        try:
+            color_id = create_attribute_term(3, color["value_it"], color["value_en"])
+            sync_new_attribute("variation_colors", color["id_sam_erp"], color_id)
+        except Exception as e:
+            logging.error(e)
 
 
 def create_dimensions_attribute_terms(dimensions_options: List[dict]):
