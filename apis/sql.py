@@ -34,4 +34,5 @@ def query_sync_db(query, dictionary=False, write=False, multi=False):
         cnx.close()
         return return_value
     except Exception as e:
+        print(e)
         logging.info(e)
