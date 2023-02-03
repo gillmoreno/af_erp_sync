@@ -1,11 +1,12 @@
-import os, sys
+from dotenv import load_dotenv
+import requests
+import logging
+from apis.sql import query_sync_db
+from apis.auth import wcapi
+import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from apis.auth import wcapi
-from apis.sql import query_sync_db
-import logging
-import requests
-from dotenv import load_dotenv
 
 cwd = os.getcwd()
 env_folder = cwd.replace("apis/products", "")
@@ -70,10 +71,24 @@ def create_or_update_product(
 def create_images_array(cover_image: str, gallery_images: str) -> list:
     return_list = []
     if cover_image:
-        return_list.append({"src": f"https://arturofacchini.it/ftp_product_images/{cover_image}"})
+        url = f"https://arturofacchini.it/ftp_product_images/{cover_image}"
+        check_url_status = get_url_status(url)
+        if check_url_status == "200":
+            cover_image_id = get_image_id_by_name(cover_image)
+            if (cover_image_id != 0):
+                return_list.append({"id": f"{cover_image_id}", "src": f"https://arturofacchini.it/ftp_product_images/{cover_image}"})
+            else:
+                return_list.append({"src": f"https://arturofacchini.it/ftp_product_images/{cover_image}"})
     if gallery_images:
         for image in gallery_images.split(","):
-            return_list.append({"src": f"https://arturofacchini.it/ftp_product_images/{image}"})
+            url = f"https://arturofacchini.it/ftp_product_images/{image}"
+            check_url_status = get_url_status(url)
+            if check_url_status == "200":
+                image_id = get_image_id_by_name(image)
+                if(image_id != 0):
+                    return_list.append({"id": f"{image_id}", "src": f"https://arturofacchini.it/ftp_product_images/{image}"})
+                else:
+                    return_list.append({"src": f"https://arturofacchini.it/ftp_product_images/{image}"})
     return return_list
 
 
@@ -112,7 +127,16 @@ def create_or_update_product_variation(
     variation_id_en: int = None,
 ):
     """Attributes must be created beforehand"""
-    image = {"src": f"https://arturofacchini.it/ftp_product_images/{image}"} if image else None
+    image_url = f"https://arturofacchini.it/ftp_product_images/{image}"
+    check_variation_image_url = get_url_status(image_url)
+    if check_variation_image_url == "200":
+        image_id = get_image_id_by_name(image)
+        if (image_id != 0):
+            image = {"id": f"{image_id}", "src": f"https://arturofacchini.it/ftp_product_images/{image}"} if image else None
+        else:
+            image = {"src": f"https://arturofacchini.it/ftp_product_images/{image}"} if image else None
+    else:
+        image = []
     data = {
         "sku": sku,
         "regular_price": regular_price,
@@ -154,6 +178,12 @@ def create_or_update_product_variation(
         "italian_id": variation_id,
         "english_id": variation_id_en,
     }
+
+
+def get_image_id_by_name(image_name: str):
+    url = f"{http_url}/wp-json/wc/v3/image?image_name={image_name}"
+    image_id = requests.request("GET", url).json()
+    return image_id
 
 
 def create_product_brand(product_id: int, brand_name: str, id_sam_erp: str):
@@ -220,3 +250,17 @@ def dict_bytes_value(dict_value: dict) -> dict:
             "config-edit-link": value["config-edit-link"],
         }
     return return_dict
+
+
+def get_url_status(url):  # checks status for each url in list urls
+
+    try:
+        r = requests.get(url)
+        status_code = str(r.status_code)
+        logging.info(f"image URL status -> {status_code}")
+
+    except Exception as e:
+        status_code = ""
+        logging.info(f"image URL EXCEPTION -> {str(e)}")
+
+    return status_code
