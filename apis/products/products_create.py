@@ -1,13 +1,14 @@
-import os, sys
+import logging
+from db_queries import get_products_out_of_sync
+from utils import print_name
+from products.products__common import *
+from products.products_wp_apis import *
+from slugify import slugify
+from apis.sql import query_sync_db
+import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from apis.sql import query_sync_db
-from slugify import slugify
-from products.products_wp_apis import *
-from products.products__common import *
-from utils import print_name
-from db_queries import get_products_out_of_sync
-import logging
 
 
 @print_name
@@ -61,8 +62,12 @@ def create_variations():
         logging.info("--> NO VARIATIONS TO CREATE\n...\n")
     for variation in variations_to_create:
         dimensions = get_dimensions(variation["variation_dimensions_id"])
-        colors = get_colors(variation["variation_colors_id"])
-        product_attributes = get_product_attributes(variation["id_parent_sam_erp"])
+        variation_colors_id = variation["variation_colors_id"]
+        if not variation_colors_id:
+            variation_colors_id = "PREDEF"
+        colors = get_colors(variation_colors_id)
+        product_attributes = get_product_attributes(
+            variation["id_parent_sam_erp"])
         parent_product_attributes = [
             {
                 "id": 2,
