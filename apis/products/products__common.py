@@ -1,8 +1,9 @@
-import os, sys
+from .products_wp_apis import *
+from apis.sql import query_sync_db
+import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from apis.sql import query_sync_db
-from .products_wp_apis import *
 
 
 def get_product_attributes(id_parent_sam_erp: str) -> dict:
@@ -133,8 +134,12 @@ def associate_product_tag_color(colors: dict, product_id: int):
 
 
 def get_individual_colors(colors: dict) -> tuple:
-    colors_italian = colors["value_it"].replace(" ", "").split("-")
-    colors_english = colors["value_en"].replace(" ", "").split("-")
+    # colors_italian = colors["value_it"].replace(" ", "").split("-")
+    # colors_english = colors["value_en"].replace(" ", "").split("-")
+    colors_italian = colors["value_it"].replace(
+        " ", "").split("_")[0].split("-")
+    colors_english = colors["value_en"].replace(
+        " ", "").split("_")[0].split("-")
     return colors_italian, colors_english
 
 
