@@ -1,7 +1,9 @@
-import os, sys
+from apis.sql import query_sync_db
+import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from apis.sql import query_sync_db
+
 
 def update_variations():
     query = """
@@ -33,8 +35,8 @@ def update_variations():
             v.id_wp_en,
             COALESCE(v.in_sync, 0),
             CONCAT(s.szGEN2, ' | W', s.WEB_CATEGORIA),
-            v.is_active,
-            s.szArticoloID,
+            COALESCE(v.is_active, 1),
+            TRIM(s.szArticoloID),
             s.szDescrizione,
             s.szDescrizione,
             s.dQuantitaMinima,
@@ -44,7 +46,8 @@ def update_variations():
             s.szLunghezza,
             s.szLarghezza,
             s.szAltezza,
-            vc.id_sam_erp,
+            # vc.id_sam_erp,
+            COALESCE(vc.id_sam_erp, "PREDEF"),
             CONCAT(
                 ROUND(s.szLunghezza, 0),
                 'x',
@@ -58,12 +61,12 @@ def update_variations():
             293
         FROM SAM_VARIATIONS AS s
         LEFT JOIN variations AS v 
-            ON s.szArticoloID = v.sku
+            ON TRIM(s.szArticoloID) = v.sku
         LEFT JOIN variation_colors as vc 
             ON vc.id_sam_erp = s.szGEN3
         ON DUPLICATE KEY UPDATE
             id_parent_sam_erp = CONCAT(s.szGEN2, ' | W', s.WEB_CATEGORIA),
-            is_active = v.is_active,
+            is_active = COALESCE(v.is_active, 1),
             description_it = s.szDescrizione,
             description_en = s.szDescrizione,
             quantity_min = s.dQuantitaMinima,
@@ -71,7 +74,7 @@ def update_variations():
             length_ = s.szLunghezza,
             width = s.szLarghezza,
             height = s.szAltezza,
-            variation_colors_id = vc.id_sam_erp,
+            variation_colors_id = COALESCE(vc.id_sam_erp, "PREDEF"),
             variation_dimensions_id = CONCAT(
                 ROUND(s.szLunghezza, 0),
                 'x',
@@ -85,6 +88,7 @@ def update_variations():
             configurator_page_en = 293;
     """
     query_sync_db(query, True, True)
+
 
 if "__main__" in __name__:
     update_variations()
