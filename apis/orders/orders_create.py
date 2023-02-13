@@ -163,7 +163,7 @@ def get_db_frontiera_orders_wp_ids():
 
 
 def create_db_frontiera_order_products(order_id: int, item: dict) -> None:
-    cliche_position, uploaded_image, preview_image = get_cliche_info(item["meta_data"])
+    cliche_color, uploaded_image_inside, uploaded_image_outside, preview_image = get_cliche_info(item["meta_data"])
     query = f"""
         INSERT INTO
             order_products(
@@ -175,9 +175,10 @@ def create_db_frontiera_order_products(order_id: int, item: dict) -> None:
                 total,
                 total_tax,
                 price,
-                uploaded_image,
+                uploaded_image_inside,
+                uploaded_image_outside,
                 preview_image,
-                cliche_position
+                cliche_color
             )
         VALUES
             (
@@ -189,9 +190,10 @@ def create_db_frontiera_order_products(order_id: int, item: dict) -> None:
                 {item["total"]},
                 {item["total_tax"]},
                 {item["price"]},
-                '{uploaded_image}',
+                '{uploaded_image_inside}',
+                '{uploaded_image_outside}',
                 '{preview_image}',
-                '{cliche_position}'
+                '{cliche_color}'
             )
 
     """
@@ -203,18 +205,24 @@ def get_cliche_info(meta_data: List[dict]) -> tuple:
     vpc_custom_data = get_meta_data_key(meta_data, "vpc-custom-data")
     if vpc_cart_data != "NOT FOUND" and vpc_custom_data != "NOT FOUND":
         canvas_data = json.loads(vpc_cart_data["canvas_data"])
-        keys = list(canvas_data["text_and_upload_panel"].keys())
+        keys = list(canvas_data["text_and_upload_panel_0"].keys())
         variable_key = keys[0] if keys else None
-        uploaded_image = (
-            canvas_data["text_and_upload_panel"][variable_key]["src"] if variable_key else ""
+        uploaded_image_inside = (
+            canvas_data["text_and_upload_panel_0"][variable_key]["src"] if variable_key else ""
+        )
+        keys = list(canvas_data["text_and_upload_panel_1"].keys())
+        variable_key = keys[0] if keys else None
+        uploaded_image_outside = (
+            canvas_data["text_and_upload_panel_1"][variable_key]["src"] if variable_key else ""
         )
         return (
-            vpc_cart_data["Posizione cliché"],
-            uploaded_image,
+            vpc_cart_data["Colore"],
+            uploaded_image_inside,
+            uploaded_image_outside,
             vpc_custom_data["preview_saved"],
         )
     else:
-        return "", "", ""
+        return "", "", "", ""
 
 
 if "__main__" in __name__:
