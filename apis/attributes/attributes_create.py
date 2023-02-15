@@ -41,7 +41,8 @@ def create_attributes_terms(dimensions_options: List[dict], colors_options: List
 def create_colors_attribute_terms(colors_options: List[dict]):
     for color in colors_options:
         try:
-            color_id = create_attribute_term(3, color["value_it"], color["value_en"])
+            # color_id = create_attribute_term(3, color["value_it"], color["value_en"])
+            color_id = create_attribute_term(3, (color["value_it"]).title(), (color["value_en"]).title())
             sync_new_attribute("variation_colors", color["id_sam_erp"], color_id)
         except Exception as e:
             logging.error(e)
