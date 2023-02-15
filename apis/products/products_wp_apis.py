@@ -171,9 +171,9 @@ def create_or_update_product_variation(
     else:
         response = wcapi.post(f"products/{str(product_id_en)}/variations", data_en).json()
         variation_id_en = response["id"] + 1
-        add_vpc_config(configurator_en, configurator_page_en, product_id_en, variation_id_en)
         wcapi.put(f"products/{str(product_id_en)}/variations/{str(variation_id_en)}", data_en)
     logging.info(f"variation_en ID -> {variation_id_en}")
+    add_vpc_config(configurator_en, configurator_page_en, product_id_en, variation_id_en)
     return {
         "italian_id": variation_id,
         "english_id": variation_id_en,
