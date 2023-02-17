@@ -79,6 +79,9 @@ def update_variations():
         simple_update_product(product_id, {"attributes": parent_product_attributes})
         pricelist_dict = get_price_list(variation["sku"])
         meta_data = [
+            {"key": "pbq_pricing_type_enable", "value": "enable"},
+            {"key": "pbq_pricing_type", "value": "fixed"},
+            {"key": "pbq_table_layout", "value": "hover_table"},
             {"key": "_alg_wc_pq_min", "value": variation["quantity_min"]},
             {"key": "_alg_wc_pq_step", "value": variation["quantity_min"]},
         ]
