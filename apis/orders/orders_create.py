@@ -163,7 +163,7 @@ def get_db_frontiera_orders_wp_ids():
 
 
 def create_db_frontiera_order_products(order_id: int, item: dict) -> None:
-    cliche_color, uploaded_image_inside, uploaded_image_outside, preview_image = get_cliche_info(item["meta_data"])
+    cliche_color_inside, cliche_color_outside, uploaded_image_inside, uploaded_image_outside, preview_image = get_cliche_info(item["meta_data"])
     query = f"""
         INSERT INTO
             order_products(
@@ -178,7 +178,8 @@ def create_db_frontiera_order_products(order_id: int, item: dict) -> None:
                 uploaded_image_inside,
                 uploaded_image_outside,
                 preview_image,
-                cliche_color
+                cliche_color_inside,
+                cliche_color_outside
             )
         VALUES
             (
@@ -193,7 +194,8 @@ def create_db_frontiera_order_products(order_id: int, item: dict) -> None:
                 '{uploaded_image_inside}',
                 '{uploaded_image_outside}',
                 '{preview_image}',
-                '{cliche_color}'
+                '{cliche_color_inside}',
+                '{cliche_color_outside}'
             )
 
     """
@@ -215,14 +217,33 @@ def get_cliche_info(meta_data: List[dict]) -> tuple:
         uploaded_image_outside = (
             canvas_data["text_and_upload_panel_1"][variable_key]["src"] if variable_key else ""
         )
+        if "Colore per l'interno" in vpc_cart_data:
+            cliche_color_inside = vpc_cart_data["Colore per l'interno"]
+        if "Color for the interior" in vpc_cart_data:
+            cliche_color_inside = vpc_cart_data["Color for the interior"]
+        if "Colore per il fronte" in vpc_cart_data:
+            cliche_color_inside = vpc_cart_data["Colore per il fronte"]
+        if "Color for the front" in vpc_cart_data:
+            cliche_color_inside = vpc_cart_data["Color for the front"]
+            
+        if "Colore per l'esterno" in vpc_cart_data:
+            cliche_color_outside = vpc_cart_data["Colore per l'esterno"]
+        if "Color for the exterior" in vpc_cart_data:
+            cliche_color_outside = vpc_cart_data["Color for the exterior"]
+        if "Colore per il retro" in vpc_cart_data:
+            cliche_color_outside = vpc_cart_data["Colore per il retro"]
+        if "Color for the back" in vpc_cart_data:
+            cliche_color_outside = vpc_cart_data["Color for the back"]
         return (
-            vpc_cart_data["Colore"],
+            # vpc_cart_data["Colore"],
+            cliche_color_inside,
+            cliche_color_outside,
             uploaded_image_inside,
             uploaded_image_outside,
             vpc_custom_data["preview_saved"],
         )
     else:
-        return "", "", "", ""
+        return "", "", "", "", ""
 
 
 if "__main__" in __name__:
