@@ -136,18 +136,10 @@ def associate_product_tag_color(colors: dict, product_id: int):
 def get_individual_colors(colors: dict) -> tuple:
     # colors_italian = colors["value_it"].replace(" ", "").split("-")
     # colors_english = colors["value_en"].replace(" ", "").split("-")
-    # colors_italian = colors["value_it"].replace(" ", "").split("_")[0].split("-")
-    colors_italian = colors["value_it"].replace(" ", "").split("_")[0]
-    if "/" in colors_italian:
-        colors_italian.split("/")
-    else:
-        colors_italian.split("-")
-    # colors_english = colors["value_en"].replace(" ", "").split("_")[0].split("-")
-    colors_english = colors["value_en"].replace(" ", "").split("_")[0]
-    if "/" in colors_english:
-        colors_english.split("/")
-    else:
-        colors_english.split("-")
+    colors_italian = colors["value_it"].replace(" ", "").split("_")[0].split("-")
+    
+    colors_english = colors["value_en"].replace(" ", "").split("_")[0].split("-")
+    
     return colors_italian, colors_english
 
 
