@@ -2,9 +2,10 @@ import os, sys
 import time
 import logging
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # from apis.db_queries import get_products_out_of_sync
-from products__common import *
-from products_wp_apis import *
+from apis.products.products__common import *
+from apis.products.products_wp_apis import *
 from apis.sql import query_sync_db
 
 import requests
@@ -15,7 +16,6 @@ from wordpress_xmlrpc.compat import xmlrpc_client
 from wordpress_xmlrpc.methods import media, users
 from wordpress_xmlrpc.exceptions import InvalidCredentialsError
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 def create_cliche_images():
 
@@ -69,24 +69,24 @@ def create_cliche_images():
         # logging.info(f"Immagine non dispobile, status {str(check_url_status)}")
 
 
-def get_url_status(url):  # checks status for url
+# def get_url_status(url):  # checks status for url
 
-    try:
-        r = requests.get(url)
-        status_code = str(r.status_code)
-        # logging.info(f"image URL status -> {status_code}")
+#     try:
+#         r = requests.get(url)
+#         status_code = str(r.status_code)
+#         # logging.info(f"image URL status -> {status_code}")
 
-    except Exception as e:
-        status_code = ""
-        # logging.info(f"image URL EXCEPTION -> {str(e)}")
+#     except Exception as e:
+#         status_code = ""
+#         # logging.info(f"image URL EXCEPTION -> {str(e)}")
 
-    return status_code
+#     return status_code
 
 
-def get_image_id_by_name(image_name: str):
-    url = f"https://arturofacchini.it/wp-json/wc/v3/image?image_name={image_name}"
-    image_id = requests.request("GET", url).json()
-    return image_id
+# def get_image_id_by_name(image_name: str):
+#     url = f"https://arturofacchini.it/wp-json/wc/v3/image?image_name={image_name}"
+#     image_id = requests.request("GET", url).json()
+#     return image_id
 
 
 
