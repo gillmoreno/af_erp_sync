@@ -7,6 +7,6 @@ from apis.customers.customers_create import create_new_customers_db_frontiera
 from apis.customers.custumers_sync_status import sync_wp_user_status
 
 if "__main__" in __name__:
+    sync_wp_user_status()
     create_new_customers_db_frontiera()
     update_customers_db_frontiera()
-    sync_wp_user_status()
