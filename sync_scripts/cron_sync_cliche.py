@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from apis.customers.customers_wp_apis import retrieve_customer
 from apis.products.products__common import *
 from apis.products.products_wp_apis import *
 from apis.sql import query_sync_db
@@ -35,7 +36,7 @@ def create_cliche_images():
     # query SAM_CLICHE
     query = f"""
         SELECT 
-            szImmagineCliche, szCodiceCliente
+            szImmagineCliche, szCodiceCliente, szNoteCliche
         FROM 
             SAM_CLICHE
     """
@@ -48,44 +49,62 @@ def create_cliche_images():
         for cliche in sam_cliches:
 
             # ID dell'utente a cui associare le immagini
-            user_id = int(cliche['szCodiceCliente'])
-            image_name = cliche['szImmagineCliche']
+            customer_id = int(cliche['szCodiceCliente'])
 
-            # URL dell'immagine
-            image_url = f"https://arturofacchini.it/ftp_product_images/cliche_images/{image_name}"
+            check_customer_id = retrieve_customer(customer_id)
 
-            check_url_status = get_url_status(image_url)
+            print('CHECK ID -> {}'.format(check_customer_id))
 
-            if check_url_status == "200":
+            # se id utente corrisponde alla mail di un customer registrato
+            if 'email' in check_customer_id:
 
-                cliche_id = get_image_id_by_name(image_name)
-                
-                if (cliche_id == 0):
+                image_name = cliche['szImmagineCliche']
+                image_description = cliche['szNoteCliche']
 
-                    # prepare metadata
-                    data = {
-                        'name': image_name,
-                        'type': 'image/jpeg',  # mimetype
-                    }
+                # URL dell'immagine
+                image_url = f"https://{os.environ.get('DOMAIN')}/ftp_product_images/cliche_images/{image_name}"
 
-                    # read the binary file and let the XMLRPC library encode it into base64
-                    with urllib.request.urlopen(image_url) as img:
-                        data['bits'] = xmlrpc_client.Binary(img.read())
+                print('FTP IMAGE URL -> {}'.format(image_url))
 
-                    response = client.call(media.UploadFile(data))
+                check_url_status = get_url_status(image_url)
 
-                    # Modifica l'autore del post relativo all'immagine
-                    url = f"https://arturofacchini.it/wp-json/wp-api/v1/cliche?image_id={str(response['id'])}&user_id={str(user_id)}"
-                    requests.request("GET", url)
+                if check_url_status == "200":
 
-                    # Stampa il risultato
-                    print('Immagine caricata come allegato di WordPress ID {} e associata all\'utente ID {}'
-                          .format(response['id'], user_id))
+                    cliche_id = get_image_id_by_name(image_name)
+                    
+                    if (cliche_id == 0):
+
+                        # prepare metadata
+                        data = {
+                            'name': image_name,
+                            'type': 'image/jpeg',  # mimetype
+                        }
+
+                        # read the binary file and let the XMLRPC library encode it into base64
+                        with urllib.request.urlopen(image_url) as img:
+                            data['bits'] = xmlrpc_client.Binary(img.read())
+
+                        response = client.call(media.UploadFile(data))
+
+                        image_description = cliche['szNoteCliche']  
+
+                        # Modifica descrizione e autore del post relativo all'immagine
+                        url = f"https://{os.environ.get('DOMAIN')}/wp-json/wp-api/v1/cliche?image_id={str(response['id'])}&customer_id={str(customer_id)}&post_content={str(image_description)}"
+                        
+                        print('REQUEST URL -> {}'.format(url))
+
+                        requests.request("GET", url)
+
+                        # Stampa il risultato
+                        print('Immagine caricata come allegato di WordPress ID {} e associata all\'utente ID {}'
+                            .format(response['id'], customer_id))
+                    else:
+                        print(
+                            'Immagine già presente su Wordpress con ID -> {}'.format(cliche_id))
                 else:
-                    print(
-                        'Immagine già presente su Wordpress con ID -> {}'.format(cliche_id))
+                    print('Immagine non disponibile, status {}'.format(check_url_status))
             else:
-                print('Immagine non dispobile, status {}'.format(check_url_status))
+                print('User non esistente {}'.format(check_customer_id))
     else:
         print("NO CLICHE TO SYNC\n...\n")
 
