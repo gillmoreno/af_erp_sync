@@ -1,6 +1,11 @@
-from auth import wcapi
 from typing import List
+from dotenv import load_dotenv
+import requests
 import logging
+from apis.sql import query_sync_db
+from apis.auth import wcapi
+import os
+import sys
 
 
 def update_customer_status(id_wp: int, status: str):
