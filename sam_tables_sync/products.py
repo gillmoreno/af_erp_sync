@@ -31,7 +31,7 @@ def update_products():
             COALESCE(p.in_sync, 0),
             CONCAT(s.AC2Descr, ' ', s.AC4Descr),
             CONCAT(s.AC2Descr, ' ', s.AC4Descr),
-            REPLACE(s.AC4Codice, 'W', ''),
+            s.AC4Codice,
             AC2Codice,
             # tags,
             # meta_descriptiom_it,

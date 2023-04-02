@@ -26,7 +26,7 @@ def update_products():
             description_en=product["description_en"],
             short_description_it=product["short_description_it"],
             short_description_en=product["short_description_en"],
-            categories=[{"id": product["category"]}],
+            categories=get_categories_list(product["category"]),
             tags=tag_list(product["tags"]),
             cover_image=product["cover_image"],
             gallery_images=product["gallery"],
