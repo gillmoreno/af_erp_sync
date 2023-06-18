@@ -163,7 +163,13 @@ def get_db_frontiera_orders_wp_ids():
 
 
 def create_db_frontiera_order_products(order_id: int, item: dict) -> None:
+    #TODO add notes custom field also here, product metadata (product_notes)
+    # print(item)
+    # item["meta_data"]["product_notes"]
+    #TODO add notes from configurator also here (from cliche_info)
+    #TODO add 2 extra columns to order_products in db_forntiera
     cliche_color_inside, cliche_color_outside, uploaded_image_inside, uploaded_image_outside, preview_image = get_cliche_info(item["meta_data"])
+    # cliche_color_inside, cliche_color_outside, uploaded_image_inside, uploaded_image_outside, preview_image, cliche_note = get_cliche_info(item["meta_data"])
     query = f"""
         INSERT INTO
             order_products(
@@ -234,6 +240,15 @@ def get_cliche_info(meta_data: List[dict]) -> tuple:
             cliche_color_outside = vpc_cart_data["Colore per il retro"]
         if "Color for the back" in vpc_cart_data:
             cliche_color_outside = vpc_cart_data["Color for the back"]
+        
+        # TODO
+        # if "Cliche note" in vpc_cart_data:
+        #     cliche_note = vpc_cart_data["Cliche note"]
+
+        # print(vpc_cart_data) to find the notes
+        # vpc_cart_data["notes... despcription"]
+        # return at the end
+
         return (
             # vpc_cart_data["Colore"],
             cliche_color_inside,
@@ -241,9 +256,11 @@ def get_cliche_info(meta_data: List[dict]) -> tuple:
             uploaded_image_inside,
             uploaded_image_outside,
             vpc_custom_data["preview_saved"],
+            # cliche_note,
         )
     else:
-        return "", "", "", "", ""
+        return "", "", "", "", "" 
+        # return "", "", "", "", "", "" 
 
 
 if "__main__" in __name__:

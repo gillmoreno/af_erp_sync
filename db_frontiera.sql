@@ -152,6 +152,7 @@ CREATE TABLE variation_colors (
     id_wp INT,
     value_it VARCHAR(128),
     value_en VARCHAR(128),
+    in_sync BOOLEAN default 0,
     PRIMARY KEY (id_sam_erp)
 );
 
@@ -159,14 +160,15 @@ CREATE TABLE variation_dimensions (
     id_sam_erp VARCHAR(32) NOT NULL,
     id_wp INT,
     value_ VARCHAR(128),
+    in_sync BOOLEAN default 0,
     PRIMARY KEY (id_sam_erp)
 );
 
 CREATE TABLE product_brands (
     id_sam_erp VARCHAR(32) NOT NULL,
-    id_wp_it INT,
-    id_wp_en INT,
+    id_wp INT,
     value_ VARCHAR(128),
+    in_sync BOOLEAN default 0,
     PRIMARY KEY (id_sam_erp)
 );
 
@@ -189,6 +191,7 @@ CREATE TABLE variation_pricelists (
     sku VARCHAR(32) NOT NULL,
     quantity INT NOT NULL,
     unit_price FLOAT NOT NULL,
+    in_sync BOOLEAN default 0,
     PRIMARY KEY (sku, quantity)
 );
 

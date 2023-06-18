@@ -47,7 +47,7 @@ def update_products():
         ON DUPLICATE KEY UPDATE
             title_it = CONCAT(s.AC2Descr, ' ', s.AC4Descr),
             title_en = CONCAT(s.AC2Descr, ' ', s.AC4Descr),
-            category = REPLACE(s.AC4Codice, 'W', ''),
+            category = s.AC4Codice,
             product_brand_id = s.AC2Codice,
             # tags = # tags,
             # meta_descriptiom_it = # meta_descriptiom_it,
