@@ -35,8 +35,8 @@ def create_or_update_product(
     data = {
         "name": title_it,
         "type": "variable",
-        "description": description_it,
-        "short_description": short_description_it,
+        # "description": description_it,
+        # "short_description": short_description_it,
         "categories": categories,
         "tags": tags,
         "images": create_images_array(cover_image, gallery_images),
@@ -50,8 +50,8 @@ def create_or_update_product(
     logging.info(f"product ID -> {str(product_id)}")
     data_en = {
         "name": title_en,
-        "description": description_en,
-        "short_description": short_description_en,
+        # "description": description_en,
+        # "short_description": short_description_en,
         "meta_data": meta_en,
         "lang": "en",
         "translation_of": product_id,
@@ -144,7 +144,7 @@ def create_or_update_product_variation(
         "image": image,
         "dimensions": dimensions,
         "attributes": attributes_it,
-        "description": description_it,
+        # "description": description_it,
         "status": "publish" if is_active else "draft",
         "meta_data": meta_data,
     }
@@ -161,7 +161,7 @@ def create_or_update_product_variation(
         "lang": "en",
         "translation_of": variation_id,
         "attributes": attributes_en,
-        "description": description_en,
+        # "description": description_en,
         "meta_data": meta_data,
     }
     if variation_id_en:
