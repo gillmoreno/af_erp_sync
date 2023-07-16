@@ -128,6 +128,7 @@ def create_or_update_product_variation(
 ):
     """Attributes must be created beforehand"""
     image_url = f"https://arturofacchini.it/ftp_product_images/{image}"
+    # Avoid errors when image is not present
     check_variation_image_url = get_url_status(image_url)
     if check_variation_image_url == "200":
         image_id = get_image_id_by_name(image)
