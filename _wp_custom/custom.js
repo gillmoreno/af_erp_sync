@@ -316,11 +316,13 @@ jQuery(document).ready(function ($) {
 		
 		$('.vpc-configure-button').on('click', function(e) {
 			e.preventDefault();
+      var id = $(this).attr("id")
+      var confNumber = id.split('-').pop() // Last part of the id is the configurator's number
 			var inputQuantity = $('input.qty').val();
 			var href = $(this).attr('href');
-			var hrefWithQty = href+'?qty='+inputQuantity
-			window.location.href= hrefWithQty
-			console.log(hrefWithQty)
+			var hrefWithQty = href+'configure/'+confNumber+'/?qty='+inputQuantity
+      window.location.href= hrefWithQty
+      console.log(hrefWithQty)
 		})
 		
 		// $('.woocommerce-Price-currencySymbol').css('display', 'none');
