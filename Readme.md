@@ -1,5 +1,13 @@
 # WooCommerce and ERP sync API
 
+## How to handle images
+
+* We use vsftpd to sync images from the `/opt/ftp_images` to wordpress
+  ** `/etc/vsftpd.conf`
+  ** `/etc/vsftpd.user_list`
+* There's a bash script `/opt/sync_ftp_images.sh` that syncs wahatever is in `/opt/ftp_images` to the docker image (wordpress)
+* When using FTP, connect to port 22 with adminweb user and load images in folder `/opt/ftp_images`
+
 ## DB Frontiera structure
 
 The file db_frontiera.sql defines the tables that are meant to exchange information between SAM ERP and Woocommerce.
