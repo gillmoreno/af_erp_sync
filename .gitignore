@@ -2,3 +2,5 @@
 *.pyc
 __pycache__/
 sync_scripts/logs/*.log
+af-theme/*
+plugins/*
