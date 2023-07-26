@@ -190,13 +190,9 @@ body:not(.logged-in) #account-section .button.woocommerce-form-login__submit{
 }
 /******** SHOP ********/
 
-body .product-meta,
-body .product-price {
+body:not(.logged-in) .product-meta,
+body:not(.logged-in) .product-price {
 	display: none !important;
-}
-body.logged-in .product-meta,
-body.logged-in .product-price {
-	display: block !important;
 }
 
 /* PRODUCTS */
