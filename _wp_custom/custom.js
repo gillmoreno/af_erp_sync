@@ -540,4 +540,11 @@ jQuery(document).ready(function ($) {
 			mobileMenuCart.append('<span class="menu-cart">'+mobileMenuResult+'</span>');
 		}
 	}
+
+  // Language changes of Plugins
+  var lang = $('html').attr('lang');
+  if (lang == 'it-IT'){
+    $('#vpc-add-to-cart').text('Aggiungi al carrello');
+  }
+
 });
