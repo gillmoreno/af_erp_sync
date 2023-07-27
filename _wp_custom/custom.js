@@ -542,9 +542,20 @@ jQuery(document).ready(function ($) {
 	}
 
   // Language changes of Plugins
-  var lang = $('html').attr('lang');
-  if (lang == 'it-IT'){
-    $('#vpc-add-to-cart').text('Aggiungi al carrello');
-  }
-
+	var lang = $('html').attr('lang');
+	if (lang == 'it-IT'){
+		$('#vpc-add-to-cart').text('Aggiungi al carrello');
+	}
+	// MINICART
+	$(document).on('click', '.menu-item.menu-item-type-post_type.menu-item-object-page', function() {
+    setTimeout(function() {
+        // This is where you can change the text in the minicart.
+        // For example, to change the text of a specific element:
+        if (lang == 'it-IT'){
+			$('a.button.checkout.wc-forward.wp-element-button').text('Richiedi preventivo');
+		} else {
+			$('a.button.checkout.wc-forward.wp-element-button').text('Request a quote');	
+		}
+    }, 500); // Delay of 500 milliseconds. Adjust this as needed.
+  });
 });
