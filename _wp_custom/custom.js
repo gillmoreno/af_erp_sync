@@ -541,7 +541,9 @@ jQuery(document).ready(function ($) {
 		}
 	}
 
-  // Language changes of Plugins
+	///////////////////////////////////////
+	// Language changes of Plugins START //
+	///////////////////////////////////////
 	var lang = $('html').attr('lang');
 	if (lang == 'it-IT'){
 		$('#vpc-add-to-cart').text('Aggiungi al carrello');
@@ -551,11 +553,17 @@ jQuery(document).ready(function ($) {
     setTimeout(function() {
         // This is where you can change the text in the minicart.
         // For example, to change the text of a specific element:
-        if (lang == 'it-IT'){
-			$('a.button.checkout.wc-forward.wp-element-button').text('Richiedi preventivo');
-		} else {
-			$('a.button.checkout.wc-forward.wp-element-button').text('Request a quote');	
-		}
-    }, 500); // Delay of 500 milliseconds. Adjust this as needed.
-  });
+			if (lang == 'it-IT'){
+				$('a.button.checkout.wc-forward.wp-element-button').text('Richiedi preventivo');
+			} else {
+				$('a.button.checkout.wc-forward.wp-element-button').text('Request a quote');
+				$('.vpc-cart-component:contains("Colore per l\'interno:")').text('Internal color:');
+				$('.vpc-cart-component:contains("Colore per l\'esterno:")').text('External 	color:');
+			}
+		}, 500); // Delay of 500 milliseconds. Adjust this as needed.
+	});
+	/////////////////////////////////////
+	// Language changes of Plugins END //
+	/////////////////////////////////////
+
 });
