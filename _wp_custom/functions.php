@@ -671,6 +671,16 @@ function custom_cart_script() {
 			$('.vpc-cart-component:contains("Colore per l\'interno:")').text('Internal color:');
 			$('.vpc-cart-component:contains("Colore per l\'esterno:")').text('External 	color:');
 		}
+        // Avoid the empty cart page by checking if the cart is empty every second
+		var url = window.location.href;
+		  if (url.endsWith("cart") || url.endsWith("cart/") || url.endsWith("carrello") || url.endsWith("carrello/")) {
+			var element = document.getElementById("page#0");
+			var interval = setInterval(function() {
+				if (element.innerHTML === "") {
+					window.location.reload();
+				}
+			}, 1000);
+		}
     });
     </script>
     <?php
