@@ -660,6 +660,7 @@ function wc_get_custom_account_menu_items()
     return apply_filters('woocommerce_account_menu_items', $items, $endpoints);
 }
 
+
 function custom_cart_script() {
     ?>
     <script type="text/javascript">
@@ -671,9 +672,19 @@ function custom_cart_script() {
 			$('.vpc-cart-component:contains("Colore per l\'interno:")').text('Internal color:');
 			$('.vpc-cart-component:contains("Colore per l\'esterno:")').text('External 	color:');
 		}
-        // Avoid the empty cart page by checking if the cart is empty every second
+		
 		var url = window.location.href;
 		  if (url.endsWith("cart") || url.endsWith("cart/") || url.endsWith("carrello") || url.endsWith("carrello/")) {
+			
+			// Remove minicart inside the cart
+			$(document).ready(function() {
+			  setTimeout(function() {
+				var anchor = $("a[href='#tm-dialog']");
+				anchor.remove();
+			  }, 1000);
+			});
+			
+			// Avoid the empty cart page by checking if the cart is empty every second
 			var element = document.getElementById("page#0");
 			var interval = setInterval(function() {
 				if (element.innerHTML === "") {
