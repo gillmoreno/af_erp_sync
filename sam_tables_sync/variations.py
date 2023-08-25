@@ -1,8 +1,7 @@
-from apis.sql import query_sync_db
-import os
-import sys
+import os, sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from apis.sql import query_sync_db
 
 
 def update_variations():
@@ -17,8 +16,6 @@ def update_variations():
             description_it,
             description_en,
             quantity_min,
-            # stock,
-            # sale_price,
             image_,
             length_,
             width,
@@ -40,13 +37,10 @@ def update_variations():
             s.szDescrizione,
             s.szDescrizione,
             s.dQuantitaMinima,
-            # s.stock,
-            # s.sale_price,
             TRIM(s.szImmagine),
             s.szLunghezza,
             s.szLarghezza,
             s.szAltezza,
-            # vc.id_sam_erp,
             COALESCE(vc.id_sam_erp, "PREDEF"),
             CONCAT(
                 ROUND(s.szLunghezza, 0),
