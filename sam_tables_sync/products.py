@@ -14,34 +14,24 @@ def update_products():
             title_en,
             category,
             product_brand_id,
-            # tags,
-            # meta_descriptiom_it,
-            # meta_descriptiom_en,
             cover_image,
             gallery,
             description_it,
             description_en
-            # short_description_it,
-            # short_description_en
         )
         SELECT 
             s.szCodice, 
-            p.id_wp,
-            p.id_wp_en,
+            COALESCE(p.id_wp, NULL),
+            COALESCE(p.id_wp_en, NULL),
             COALESCE(p.in_sync, 0),
             CONCAT(s.AC2Descr, ' ', s.AC4Descr),
             CONCAT(s.AC2Descr, ' ', s.AC4Descr),
             s.AC4Codice,
-            AC2Codice,
-            # tags,
-            # meta_descriptiom_it,
-            # meta_descriptiom_en,
+            s.AC2Codice,
             s.ImgPrincipale,
             s.ImgGalleria,
-            szDescrizione,
-            szDescrizione
-            # short_description_it,
-            # short_description_en
+            s.szDescrizione,
+            s.szDescrizione
         FROM SAM_GENITORI AS s
         LEFT JOIN products AS p ON s.szCodice = p.id_sam_erp
         ON DUPLICATE KEY UPDATE
@@ -49,9 +39,6 @@ def update_products():
             title_en = CONCAT(s.AC2Descr, ' ', s.AC4Descr),
             category = s.AC4Codice,
             product_brand_id = s.AC2Codice,
-            # tags = # tags,
-            # meta_descriptiom_it = # meta_descriptiom_it,
-            # meta_descriptiom_en = # meta_descriptiom_en,
             cover_image = s.ImgPrincipale,
             gallery = s.ImgGalleria,
             description_it = s.szDescrizione,
@@ -61,3 +48,14 @@ def update_products():
 
 if "__main__" in __name__:
     update_products()
+
+
+# A query that helped me put values from products to SAM_GENITORI that will make it easier to put image names there
+useful_query = """
+    UPDATE SAM_GENITORI
+    INNER JOIN products ON SAM_GENITORI.szDescrizione = products.description_it
+    SET
+    SAM_GENITORI.ImgPrincipale = products.cover_image,
+    SAM_GENITORI.ImgGalleria = products.gallery
+    
+"""
