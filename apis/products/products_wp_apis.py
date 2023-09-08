@@ -265,7 +265,7 @@ def get_url_status(url):  # checks status for each url in list urls
 
     return status_code
 
-def get_categories_list(categories_str: str) -> list(str):
+def get_categories_list(categories_str: str) -> list:
     categories = categories_str.replace(" ","").split(",")
     return [
         {"id": category.replace("W", "")}
