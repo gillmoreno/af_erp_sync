@@ -1,0 +1,195 @@
+{
+	"data":
+	[
+		{
+			"AC2Codice": "A101",
+			"AC2Descr": "NEW ALTEA",
+			"AC4Codice": "W372",
+			"AC4Descr": "Astucci per anelli",
+			"szCodice": "A101 | W372",
+			"szDescrizione": "NEW ALTEA | Astucci per anelli",
+			"ImgPrincipale": null,
+			"ImgGalleria": null
+		},
+		{
+			"AC2Codice": "A530",
+			"AC2Descr": "ARTEMIDE",
+			"AC4Codice": "W372",
+			"AC4Descr": "Astucci per anelli",
+			"szCodice": "A530 | W372",
+			"szDescrizione": "ARTEMIDE | Astucci per anelli",
+			"ImgPrincipale": null,
+			"ImgGalleria": null
+		},
+		{
+			"AC2Codice": "A553",
+			"AC2Descr": "PLATINUM",
+			"AC4Codice": "W372",
+			"AC4Descr": "Astucci per anelli",
+			"szCodice": "A553 | W372",
+			"szDescrizione": "PLATINUM | Astucci per anelli",
+			"ImgPrincipale": null,
+			"ImgGalleria": null
+		},
+		{
+			"AC2Codice": "A554",
+			"AC2Descr": "PLATINUM LED",
+			"AC4Codice": "W372",
+			"AC4Descr": "Astucci per anelli",
+			"szCodice": "A554 | W372",
+			"szDescrizione": "PLATINUM LED | Astucci per anelli",
+			"ImgPrincipale": null,
+			"ImgGalleria": null
+		},
+		{
+			"AC2Codice": "AF127",
+			"AC2Descr": "VOGUE",
+			"AC4Codice": "W369",
+			"AC4Descr": "Astucci per gioielli",
+			"szCodice": "AF127 | W369",
+			"szDescrizione": "VOGUE | Astucci per gioielli",
+			"ImgPrincipale": null,
+			"ImgGalleria": null
+		},
+		{
+			"AC2Codice": "EF",
+			"AC2Descr": "ESPOSITORI",
+			"AC4Codice": "W381",
+			"AC4Descr": "Espositori anelli",
+			"szCodice": "EF | W381",
+			"szDescrizione": "ESPOSITORI | Espositori anelli",
+			"ImgPrincipale": null,
+			"ImgGalleria": null
+		},
+		{
+			"AC2Codice": "EF",
+			"AC2Descr": "ESPOSITORI",
+			"AC4Codice": "W382",
+			"AC4Descr": "Espositori orecchini",
+			"szCodice": "EF | W382",
+			"szDescrizione": "ESPOSITORI | Espositori orecchini",
+			"ImgPrincipale": null,
+			"ImgGalleria": null
+		},
+		{
+			"AC2Codice": "7PET",
+			"AC2Descr": "PETTIERE",
+			"AC4Codice": "W380",
+			"AC4Descr": "Espositiori collana",
+			"szCodice": "7PET | W380",
+			"szDescrizione": "PETTIERE | Espositiori collana",
+			"ImgPrincipale": null,
+			"ImgGalleria": null
+		},
+		{
+			"AC2Codice": "EF",
+			"AC2Descr": "ESPOSITORI",
+			"AC4Codice": "W550",
+			"AC4Descr": "Espositori bracciali",
+			"szCodice": "EF | W550",
+			"szDescrizione": "ESPOSITORI | Espositori bracciali",
+			"ImgPrincipale": null,
+			"ImgGalleria": null
+		},
+		{
+			"AC2Codice": "A150",
+			"AC2Descr": "FLOWER",
+			"AC4Codice": "W372",
+			"AC4Descr": "Astucci per anelli",
+			"szCodice": "A150 | W372",
+			"szDescrizione": "FLOWER | Astucci per anelli",
+			"ImgPrincipale": null,
+			"ImgGalleria": null
+		},
+		{
+			"AC2Codice": "A122",
+			"AC2Descr": "STYLE",
+			"AC4Codice": "W372",
+			"AC4Descr": "Astucci per anelli",
+			"szCodice": "A122 | W372",
+			"szDescrizione": "STYLE | Astucci per anelli",
+			"ImgPrincipale": null,
+			"ImgGalleria": null
+		},
+		{
+			"AC2Codice": "A118",
+			"AC2Descr": "BABY BOX",
+			"AC4Codice": "W372",
+			"AC4Descr": "Astucci per anelli",
+			"szCodice": "A118 | W372",
+			"szDescrizione": "BABY BOX | Astucci per anelli",
+			"ImgPrincipale": null,
+			"ImgGalleria": null
+		},
+		{
+			"AC2Codice": "A117",
+			"AC2Descr": "ETNO",
+			"AC4Codice": "W372",
+			"AC4Descr": "Astucci per anelli",
+			"szCodice": "A117 | W372",
+			"szDescrizione": "ETNO | Astucci per anelli",
+			"ImgPrincipale": null,
+			"ImgGalleria": null
+		},
+		{
+			"AC2Codice": "A110",
+			"AC2Descr": "EDERA",
+			"AC4Codice": "W372",
+			"AC4Descr": "Astucci per anelli",
+			"szCodice": "A110 | W372",
+			"szDescrizione": "EDERA | Astucci per anelli",
+			"ImgPrincipale": null,
+			"ImgGalleria": null
+		},
+		{
+			"AC2Codice": "A105",
+			"AC2Descr": "SMART",
+			"AC4Codice": "W374",
+			"AC4Descr": "Astucci per bracciali",
+			"szCodice": "A105 | W374",
+			"szDescrizione": "SMART | Astucci per bracciali",
+			"ImgPrincipale": null,
+			"ImgGalleria": null
+		},
+		{
+			"AC2Codice": "A105",
+			"AC2Descr": "SMART",
+			"AC4Codice": "W372",
+			"AC4Descr": "Astucci per anelli",
+			"szCodice": "A105 | W372",
+			"szDescrizione": "SMART | Astucci per anelli",
+			"ImgPrincipale": null,
+			"ImgGalleria": null
+		},
+		{
+			"AC2Codice": "A116",
+			"AC2Descr": "STAR",
+			"AC4Codice": "W372",
+			"AC4Descr": "Astucci per anelli",
+			"szCodice": "A116 | W372",
+			"szDescrizione": "STAR | Astucci per anelli",
+			"ImgPrincipale": null,
+			"ImgGalleria": null
+		},
+		{
+			"AC2Codice": "A116",
+			"AC2Descr": "STAR",
+			"AC4Codice": "W371",
+			"AC4Descr": "Astucci per collane",
+			"szCodice": "A116 | W371",
+			"szDescrizione": "STAR | Astucci per collane",
+			"ImgPrincipale": null,
+			"ImgGalleria": null
+		},
+		{
+			"AC2Codice": "A115",
+			"AC2Descr": "BABY EDERA",
+			"AC4Codice": "W372",
+			"AC4Descr": "Astucci per anelli",
+			"szCodice": "A115 | W372",
+			"szDescrizione": "BABY EDERA | Astucci per anelli",
+			"ImgPrincipale": null,
+			"ImgGalleria": null
+		}
+	]
+}
