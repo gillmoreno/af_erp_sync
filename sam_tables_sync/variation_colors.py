@@ -1,9 +1,10 @@
-from apis.sql import query_sync_db
 import os
 import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from apis.sql import query_sync_db
 
+print(os.path.basename(__file__))
 
 def update_variation_colors():
     # query = """
