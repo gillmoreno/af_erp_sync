@@ -82,3 +82,8 @@ Inside the apis folder, there are the scripts that will be called when:
 - Cosa sucede quando si deve creare una nuova varizione (con attributi nuovi)?
   - La gestione degli atributi dovrebbe fatta da una tabella aparte, con attributi standard
   - Il problema è che le traduzioni sono "difficili" da sincronizzare
+
+## Images
+
+- Create the missing images csvs with the `missing_images.py`
+- Fill in the missing images and run the script `fill_missing_images.py`

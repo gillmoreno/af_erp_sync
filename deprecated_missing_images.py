@@ -2,8 +2,8 @@ import json
 import pandas as pd
 import questionary
 
-PRODUCT_COLS = ["id_sam_erp", "szDescrizione", "cover_image", "gallery"]
-VARIATION_COLS = ["sku", "image_", "szDescrizione"]
+PRODUCT_COLS = ["szCodice", "szDescrizione", "ImgPrincipale", "ImgGalleria"]
+VARIATION_COLS = ["szArticoloID", "szImmagine", "szDescrizione"]
 
 def create_missing_images_csv(is_product: bool):
     prefix = "products" if is_product else "variations"

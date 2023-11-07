@@ -1,0 +1,11 @@
+0 0 * * Sun docker-compose -f /opt/wp_docker_ubuntu/docker-compose-ssl-ready.yaml run certbot && docke>
+*/5 * * * * python3 /opt/wp_docker_ubuntu/health_check.py
+0 23,11 * * * cd /opt/af_erp_sync/sam_tables_sync && ./_sync_all.sh
+0 0,12 * * * cd /opt/af_erp_sync/sync_scripts && python3 cron_sync_products.py
+0 7,9,11,13,15 * * * cd /opt/af_erp_sync/sync_scripts && python3 cron_sync_customers.py && python3 cro>
+0 6,8,12,14,16 * * * cd /opt/af_erp_sync/sync_scripts && python3 cron_sync_cliche.py
+
+
+# sync description and images from wordpress to erp
+# restore crontab
+# create missing images csvs

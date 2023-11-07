@@ -187,6 +187,7 @@ def get_image_id_by_name(image_name: str):
 
 
 def create_product_brand(product_id: int, brand_name: str, id_sam_erp: str):
+    brand_name = brand_name.replace(" ", "+")
     url = f"{http_url}/wp-json/wc/v3/create-brand?product_id={str(product_id)}&brand_name={brand_name}"
     product_brand = requests.request("GET", url)
     sync_product_brand(id_sam_erp, product_brand.json()[0]["term_id"])
