@@ -15,11 +15,7 @@ def update_products():
             title_it,
             title_en,
             category,
-            product_brand_id,
-            cover_image,
-            gallery,
-            description_it,
-            description_en
+            product_brand_id
         )
         SELECT 
             s.szCodice, 
@@ -29,11 +25,7 @@ def update_products():
             CONCAT(s.AC2Descr, ' ', s.AC4Descr),
             CONCAT(s.AC2Descr, ' ', s.AC4Descr),
             s.AC4Codice,
-            s.AC2Codice,
-            s.ImgPrincipale,
-            s.ImgGalleria,
-            s.szDescrizione,
-            s.szDescrizione
+            s.AC2Codice
         FROM SAM_GENITORI AS s
         LEFT JOIN products AS p ON s.szCodice = p.id_sam_erp
         ON DUPLICATE KEY UPDATE
