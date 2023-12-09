@@ -23,7 +23,8 @@ load_dotenv(f"../.env")
 
 def create_cliche_images():
 
-    print("Start Create Cliche Images")
+    start_time = time.time()
+    logger.info("Start Create Cliche Images...")
 
     # Configurazione dell'accesso al sito Wordpress
     url = f"https://{os.environ.get('DOMAIN')}/xmlrpc.php"
@@ -31,7 +32,7 @@ def create_cliche_images():
     password = os.environ.get('WP_PASSWORD')
     client = Client(url, username, password)
 
-    # print("client -> {}".format(client))
+    # logger.info("client -> {}".format(client))
 
     # query SAM_CLICHE
     query = f"""
@@ -42,7 +43,7 @@ def create_cliche_images():
     """
     sam_cliches = query_sync_db(query, True)
 
-    # print("query DB {}".format(sam_cliches))
+    # logger.info("query DB {}".format(sam_cliches))
 
     if sam_cliches:
 
@@ -53,7 +54,7 @@ def create_cliche_images():
 
             check_customer_id = retrieve_customer(customer_id)
 
-            print('CHECK ID -> {}'.format(check_customer_id))
+            logger.info('CHECK ID -> {}'.format(check_customer_id))
 
             # se id utente corrisponde alla mail di un customer registrato
             if 'email' in check_customer_id:
@@ -64,7 +65,7 @@ def create_cliche_images():
                 # URL dell'immagine
                 image_url = f"https://{os.environ.get('DOMAIN')}/ftp_product_images/cliche_images/{image_name}"
 
-                print('FTP IMAGE URL -> {}'.format(image_url))
+                logger.info('FTP IMAGE URL -> {}'.format(image_url))
 
                 check_url_status = get_url_status(image_url)
 
@@ -91,22 +92,24 @@ def create_cliche_images():
                         # Modifica descrizione e autore del post relativo all'immagine
                         url = f"https://{os.environ.get('DOMAIN')}/wp-json/wp-api/v1/cliche?image_id={str(response['id'])}&customer_id={str(customer_id)}&post_content={str(image_description)}"
                         
-                        print('REQUEST URL -> {}'.format(url))
+                        logger.info('REQUEST URL -> {}'.format(url))
 
                         requests.request("GET", url)
 
                         # Stampa il risultato
-                        print('Immagine caricata come allegato di WordPress ID {} e associata all\'utente ID {}'
+                        logger.info('Immagine caricata come allegato di WordPress ID {} e associata all\'utente ID {}'
                             .format(response['id'], customer_id))
                     else:
-                        print(
+                        logger.info(
                             'Immagine già presente su Wordpress con ID -> {}'.format(cliche_id))
                 else:
-                    print('Immagine non disponibile, status {}'.format(check_url_status))
+                    logger.info('Immagine non disponibile, status {}'.format(check_url_status))
             else:
-                print('User non esistente {}'.format(check_customer_id))
+                logger.info('User non esistente {}'.format(check_customer_id))
     else:
-        print("NO CLICHE TO SYNC\n...\n")
+        logger.info("NO CLICHE TO SYNC\n...\n")
+    
+    logger.info(f"Sync cliches, tempo -> {str(time.time() - start_time)}")
 
 
 if "__main__" in __name__:

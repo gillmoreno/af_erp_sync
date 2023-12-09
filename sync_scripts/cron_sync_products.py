@@ -3,7 +3,7 @@ import time
 from loguru import logger
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from sync_scripts import *
+from sync_scripts.cron_sync_stock import sync_stock
 from apis.attributes.attributes_create import create_attributes
 from apis.products.products_create import create_parent_products, create_variations
 from apis.products.products_update import update_products, update_variations
@@ -14,9 +14,9 @@ from sam_tables_sync.variation_dimensions import update_variation_dimensions
 from sam_tables_sync.variation_pricelists import update_variation_pricelists
 from sam_tables_sync.variations import update_variations as sam_update_variations
 
-
 if "__main__" in __name__:
     start_time = time.time()
+    sync_stock()
     # Update DB frontiera from SAM tables
     update_product_brands()
     update_variation_colors()
