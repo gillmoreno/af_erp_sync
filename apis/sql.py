@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 import mysql.connector
-import logging
+from loguru import logger
 
 load_dotenv()
 
@@ -35,4 +35,4 @@ def query_sync_db(query, dictionary=False, write=False, multi=False):
         return return_value
     except Exception as e:
         print(e)
-        logging.info(e)
+        logger.info(e)

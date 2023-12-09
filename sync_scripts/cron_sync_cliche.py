@@ -1,6 +1,6 @@
 import os, sys
 import time
-import logging
+from loguru import logger
 from dotenv import load_dotenv
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

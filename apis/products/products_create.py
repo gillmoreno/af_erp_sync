@@ -1,4 +1,4 @@
-import logging
+from loguru import logger
 from db_queries import get_products_out_of_sync
 from utils import print_name
 from products.products__common import *
@@ -15,7 +15,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 def create_parent_products():
     products_to_create = get_products_out_of_sync(new_only=True, is_variation=False)
     if not products_to_create:
-        logging.info("--> NO PRODUCTS TO CREATE\n...\n")
+        logger.info("--> NO PRODUCTS TO CREATE\n...\n")
     for product in products_to_create:
         wp_product = create_or_update_product(
             title_it=product["title_it"],
@@ -59,7 +59,7 @@ def sync_new_product(id_sam_erp: str, wp_product: dict):
 def create_variations():
     variations_to_create = get_products_out_of_sync(new_only=True, is_variation=True)
     if not variations_to_create:
-        logging.info("--> NO VARIATIONS TO CREATE\n...\n")
+        logger.info("--> NO VARIATIONS TO CREATE\n...\n")
     for variation in variations_to_create:
         dimensions = get_dimensions(variation["variation_dimensions_id"])
         variation_colors_id = variation["variation_colors_id"]

@@ -1,6 +1,6 @@
 import os, sys
 import time
-import logging
+from loguru import logger
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from sync_scripts import *
@@ -30,4 +30,4 @@ if "__main__" in __name__:
     create_variations()
     update_products()
     update_variations()
-    logging.info(f"Sync prodotti, tempo -> {str(time.time() - start_time)}")
+    logger.info(f"Sync prodotti, tempo -> {str(time.time() - start_time)}")

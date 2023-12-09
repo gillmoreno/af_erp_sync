@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 import requests
-import logging
+from loguru import logger
 from apis.sql import query_sync_db
 from apis.auth import wcapi
 import os
@@ -47,7 +47,7 @@ def create_or_update_product(
     else:
         result = wcapi.post("products", data).json()
         product_id = result["id"]
-    logging.info(f"product ID -> {str(product_id)}")
+    logger.info(f"product ID -> {str(product_id)}")
     data_en = {
         "name": title_en,
         # "description": description_en,
@@ -61,7 +61,7 @@ def create_or_update_product(
     else:
         result = wcapi.post("products", data_en).json()
         product_id_en = result["id"]
-    logging.info(f"product ID -> {str(product_id_en)}")
+    logger.info(f"product ID -> {str(product_id_en)}")
     return {
         "italian_id": product_id,
         "english_id": product_id_en,
@@ -98,11 +98,11 @@ def retrieve_product(product_id: int) -> dict:
 
 def simple_update_product(product_id: int, data: dict):
     updated_product = wcapi.put(f"products/{str(product_id)}", data).json()
-    logging.info(f"updated_product ID -> {str(updated_product['id'])}")
+    logger.info(f"updated_product ID -> {str(updated_product['id'])}")
 
 
 def delete_product(product_id: int) -> None:
-    logging.info(wcapi.delete(f"products/{str(product_id)}", params={"force": True}).json())
+    logger.info(wcapi.delete(f"products/{str(product_id)}", params={"force": True}).json())
 
 
 def create_or_update_product_variation(
@@ -156,7 +156,7 @@ def create_or_update_product_variation(
     else:
         response = wcapi.post(f"products/{str(product_id)}/variations", data).json()
         variation_id = response["id"]
-    logging.info(f"variation ID -> {str(variation_id)}")
+    logger.info(f"variation ID -> {str(variation_id)}")
     add_vpc_config(configurator_it, configurator_page_it, product_id, variation_id)
     data_en = {
         "lang": "en",
@@ -172,7 +172,7 @@ def create_or_update_product_variation(
     else:
         variation_id_en = variation_id + 1
         wcapi.put(f"products/{str(product_id_en)}/variations/{str(variation_id_en)}", data_en)
-    logging.info(f"variation_en ID -> {variation_id_en}")
+    logger.info(f"variation_en ID -> {variation_id_en}")
     add_vpc_config(configurator_en, configurator_page_en, product_id_en, variation_id_en)
     return {
         "italian_id": variation_id,
@@ -258,11 +258,11 @@ def get_url_status(url):  # checks status for each url in list urls
     try:
         r = requests.get(url)
         status_code = str(r.status_code)
-        logging.info(f"image URL status -> {status_code}")
+        logger.info(f"image URL status -> {status_code}")
 
     except Exception as e:
         status_code = ""
-        logging.info(f"image URL EXCEPTION -> {str(e)}")
+        logger.info(f"image URL EXCEPTION -> {str(e)}")
 
     return status_code
 

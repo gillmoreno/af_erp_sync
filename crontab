@@ -1,9 +1,39 @@
-0 0 * * Sun docker-compose -f /opt/wp_docker_ubuntu/docker-compose-ssl-ready.yaml run certbot && docke>
+0 0 * * Sun docker-compose -f /opt/wp_docker_ubuntu/docker-compose-ssl-ready.yaml run certbot && docker restart webserver
 */5 * * * * python3 /opt/wp_docker_ubuntu/health_check.py
-0 23,11 * * * cd /opt/af_erp_sync/sam_tables_sync && ./_sync_all.sh
-0 0,12 * * * cd /opt/af_erp_sync/sync_scripts && python3 cron_sync_products.py
-0 7,9,11,13,15 * * * cd /opt/af_erp_sync/sync_scripts && python3 cron_sync_customers.py && python3 cro>
-0 6,8,12,14,16 * * * cd /opt/af_erp_sync/sync_scripts && python3 cron_sync_cliche.py
+0 9,13,17 * * * cd /opt/af_erp_sync/sam_tables_sync && ./_sync_all.sh
+0 10,14,18 * * * cd /opt/af_erp_sync/sync_scripts && python3 cron_sync_products.py
+*/15 * * * * cd /opt/af_erp_sync/sync_scripts && python3 cron_sync_customers.py && python3 cron_sync_orders.py
+0 11,15,19 * * * cd /opt/af_erp_sync/sync_scripts && python3 cron_sync_cliche.py
+
+
+
+#TODO aggiornare ogni 15 minuti queste tabelle
+
+* billing_addresses
+* customers
+* customer_shipping_address
+* orders_products
+* orders
+* shipping_addresses
+
+#TODO aggiornare / sync con tabelle SAM 3 volte al giorno
+
+
+#TODO
+* Dare la possibilità agli commerciali di aggiornare gli ordini
+* Creare tabella Ordini confermati. 
+* Questa tabella viene creata dai commerciali con delle "proposte di ordine" (Che sarebbero gli ordini WP)
+* Forse meglio: creare un nuovo status per gli ordini (In lavorazione / Ordine aggiornato)
+
+
+
+# TODO Giacenza [DONE]
+
+1) Create a SQL query that:
+    Populates the "stock" field in the "variations" table by doing a search of the "sku" field on the variations table on the "szArticoloID" field in the "SAM_GIACENZE" table and getting the "szSemaforoID" value for that row. The search should be "szArticoloID.SAM_GIACENZE.value" contains "sku.variations.value"
+
+
+
 
 
 # sync description and images from wordpress to erp

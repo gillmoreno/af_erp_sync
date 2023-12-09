@@ -5,7 +5,7 @@ from apis.sql import query_sync_db
 from utils import *
 from customers.customers_wp_apis import *
 from customers.customers__common import *
-import logging
+from loguru import logger
 
 
 @print_name
@@ -15,7 +15,7 @@ def create_new_customers_db_frontiera():
     """
     new_customers = get_new_customers()
     if not new_customers:
-        logging.info("--> NO NEW CUSTOMERS TO SYNC\n...\n")
+        logger.info("--> NO NEW CUSTOMERS TO SYNC\n...\n")
     for customer in new_customers:
         create_db_frontiera_customer(
             customer["id"],

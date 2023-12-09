@@ -1,4 +1,4 @@
-import logging
+from loguru import logger
 from apis.db_queries import get_products_out_of_sync
 from products.products__common import *
 from products.products_wp_apis import *
@@ -15,7 +15,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 def update_products():
     products_to_update = get_products_out_of_sync(False, False)
     if not products_to_update:
-        logging.info("--> NO PRODUCTS TO UPDATE\n...\n")
+        logger.info("--> NO PRODUCTS TO UPDATE\n...\n")
     for product in products_to_update:
         create_or_update_product(
             product_id=product["id_wp"],
@@ -52,7 +52,7 @@ def sync_updated_product(id_sam_erp: str) -> None:
 def update_variations():
     variations_to_update = get_products_out_of_sync(False, True)
     if not variations_to_update:
-        logging.info("--> NO VARIATIONS TO UPDATE\n...\n")
+        logger.info("--> NO VARIATIONS TO UPDATE\n...\n")
     for variation in variations_to_update:
         dimensions = get_dimensions(variation["variation_dimensions_id"])
         variation_colors_id = variation["variation_colors_id"]

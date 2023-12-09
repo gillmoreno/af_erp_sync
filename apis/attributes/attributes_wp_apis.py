@@ -3,7 +3,7 @@ import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from apis.auth import wcapi
 from slugify import slugify
-import logging
+from loguru import logger
 
 """
 Attributes, attributes terms and its translations must be created before the products and variations
@@ -35,4 +35,4 @@ def translate_attribute_term(
         "lang": lang,
     }
     attribute = wcapi.post(f"products/attributes/{str(attribute_id)}/terms", data).json()
-    logging.info(f"attribute slug -> {attribute['slug']}")
+    logger.info(f"attribute slug -> {attribute['slug']}")

@@ -1,7 +1,7 @@
 from typing import List
 from dotenv import load_dotenv
 import requests
-import logging
+from loguru import logger
 from apis.sql import query_sync_db
 from apis.auth import wcapi
 import os
@@ -9,7 +9,7 @@ import sys
 
 
 def update_customer_status(id_wp: int, status: str):
-    logging.info(f"-> update_customer_status id_wp: {str(id_wp)}, status: {status}")
+    logger.info(f"-> update_customer_status id_wp: {str(id_wp)}, status: {status}")
     data = {
         "meta_data": [
             {
@@ -18,7 +18,7 @@ def update_customer_status(id_wp: int, status: str):
             },
         ]
     }
-    logging.info(wcapi.put(f"customers/{str(id_wp)}", data).json())
+    logger.info(wcapi.put(f"customers/{str(id_wp)}", data).json())
 
 
 def retrieve_customer(customer_id: int):

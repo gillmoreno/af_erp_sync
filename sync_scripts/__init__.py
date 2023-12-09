@@ -1,21 +1,21 @@
 import sys
-import logging
+from loguru import logger
 import datetime
 
 now_string = str(datetime.datetime.now())
 
-logging.basicConfig(
-    level=logging.INFO,
+logger.basicConfig(
+    level=logger.INFO,
     filename=f"logs/{format(now_string)}-sync.log",
     filemode="w",
     format="%(name)s - %(levelname)s - %(message)s",
 )
 
-root = logging.getLogger()
-root.setLevel(logging.INFO)
+root = logger.getLogger()
+root.setLevel(logger.INFO)
 
-handler = logging.StreamHandler(sys.stdout)
-handler.setLevel(logging.INFO)
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+handler = logger.StreamHandler(sys.stdout)
+handler.setLevel(logger.INFO)
+formatter = logger.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 handler.setFormatter(formatter)
 root.addHandler(handler)

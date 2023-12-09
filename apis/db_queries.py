@@ -1,5 +1,5 @@
 from apis.sql import query_sync_db
-import logging
+from loguru import logger
 
 
 def get_products_out_of_sync(new_only: bool, is_variation: bool) -> list:
@@ -15,5 +15,5 @@ def get_products_out_of_sync(new_only: bool, is_variation: bool) -> list:
     """
     return_data = query_sync_db(query=query, dictionary=True)
     if not return_data:
-        logging.info("-> Non ci sono prodotti da sincronizzare")
+        logger.info("-> Non ci sono prodotti da sincronizzare")
     return return_data

@@ -1,4 +1,4 @@
-import logging
+from loguru import logger
 import os, sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -45,7 +45,7 @@ def create_colors_attribute_terms(colors_options: List[dict]):
             color_id = create_attribute_term(3, (color["value_it"]).title(), (color["value_en"]).title())
             sync_new_attribute("variation_colors", color["id_sam_erp"], color_id)
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
 
 
 def create_dimensions_attribute_terms(dimensions_options: List[dict]):
