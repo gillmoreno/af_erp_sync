@@ -76,7 +76,13 @@ def update_variations():
             },
         ]
         product_id, product_id_en = get_product_wp_id(variation["id_parent_sam_erp"])
-        simple_update_product(product_id, {"attributes": parent_product_attributes})
+        try:
+            simple_update_product(product_id, {"attributes": parent_product_attributes})
+        except Exception as e:
+            logger.error(f"simple_update_product() -> product_id = {str(product_id)}")
+            logger.error(e)
+            continue
+
         pricelist_dict = get_price_list(variation["sku"])
         meta_data = [
             {"key": "pbq_pricing_type_enable", "value": "enable"},
