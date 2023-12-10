@@ -7,6 +7,7 @@ import os
 import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from products.products__common import *
 
 cwd = os.getcwd()
 env_folder = cwd.replace("apis/products", "")
@@ -103,6 +104,46 @@ def simple_update_product(product_id: int, data: dict):
 
 def delete_product(product_id: int) -> None:
     logger.info(wcapi.delete(f"products/{str(product_id)}", params={"force": True}).json())
+
+
+# TODO ... maybe??
+# def update_variation_price(
+#     product_id: int,
+#     product_id_en: int,
+#     variation_id: int,
+#     variation_id_en: int,
+#     sku: str,
+# ):
+#     pricelist_dict = get_price_list("sku")
+#     meta_data = [
+#         {"key": "pbq_pricing_type_enable", "value": "enable"},
+#         {"key": "pbq_pricing_type", "value": "fixed"},
+#         {"key": "pbq_table_layout", "value": "hover_table"},
+#     ]
+#     meta_data.append(
+#         {
+#             "key": "pbq_discount_table_data",
+#             "value": pricelist_dict["quantity_discounted_prices"],
+#         }
+#     )
+#     data = {
+#         "sku": sku,
+#         "meta_data": meta_data
+#     }
+#     response = wcapi.put(
+#         f"products/{str(product_id)}/variations/{str(variation_id)}", data
+#     ).json()
+#     logger.info(f"variation ID -> {str(variation_id)}")
+#     data_en = {
+#         "lang": "en",
+#         "translation_of": variation_id,
+#     }
+#     response = wcapi.put(
+#         f"products/{str(product_id_en)}/variations/{str(variation_id_en)}", data_en
+#     ).json()
+
+    
+    
 
 
 def create_or_update_product_variation(

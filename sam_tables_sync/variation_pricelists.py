@@ -71,7 +71,7 @@ def delete_mismatched_skus(skus):
     query_sync_db(query, False, True)
     
 @log_func
-def update_variation_pricelists():
+def add_variation_pricelists():
     query = """
         INSERT INTO variation_pricelists (sku, quantity, unit_price)
         SELECT 
@@ -84,9 +84,36 @@ def update_variation_pricelists():
     """
     query_sync_db(query, False, True)
 
+@log_func
+def get_out_of_sync_skus():
+    query = """
+        SELECT DISTINCT sku
+        FROM variation_pricelists
+        WHERE in_sync = 0;
+    """
+    result = query_sync_db(query)
+    return [item[0] for item in result]
 
+@log_func
+def put_variations_out_of_sync(skus):
+    string_in = str(skus).replace("[","").replace("]","")
+    query = f"""
+        UPDATE variations
+        SET in_sync = 0
+        WHERE sku IN ({string_in});
+    """
+    query_sync_db(query, False, True)
 
-if "__main__" in __name__:
+@log_func
+def put_variation_pricelists_back_in_sync():
+    query = f"""
+        UPDATE variation_pricelists
+        SET in_sync = 1;
+    """
+    query_sync_db(query, False, True)
+
+@log_func
+def update_variation_pricelists():
     logger.info("Updating pricelists...")
     unique_skus = get_unique_skus()
     occurrances_wp = get_skus_occurrances_in_variation_pricelists(unique_skus)
@@ -96,4 +123,11 @@ if "__main__" in __name__:
     
     mismatched_skus = find_mismatched_occurrences(occurrances_wp, occurrances_sam)
     delete_mismatched_skus(mismatched_skus)
+    add_variation_pricelists()
+    out_of_sync_skus = get_out_of_sync_skus()
+    put_variations_out_of_sync(out_of_sync_skus)
+    put_variation_pricelists_back_in_sync()
+
+
+if "__main__" in __name__:
     update_variation_pricelists()
