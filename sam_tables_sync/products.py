@@ -5,7 +5,27 @@ from apis.sql import query_sync_db
 
 print(os.path.basename(__file__))
 
+
 def update_products():
+    """
+    Updates the local database's `products` table with product information from the external `SAM_GENITORI` table.
+
+    This function executes an SQL query to insert new product records into the `products` table or update
+    existing records based on the ERP code (`id_sam_erp`). The insertion or update includes the product's
+    ERP code, WordPress IDs (`id_wp`, `id_wp_en`), sync status (`in_sync`), titles in Italian (`title_it`)
+    and English (`title_en`), category (`category`), and brand ID (`product_brand_id`).
+
+    The function employs an `ON DUPLICATE KEY UPDATE` clause to ensure existing records are refreshed with
+    the latest information from the `SAM_GENITORI` table without creating duplicate entries. Product titles
+    and categories are dynamically constructed from the ERP data.
+
+    Side Effects:
+        - Executes an SQL insert/update operation on the `products` table in the local database.
+        - Logs the name of the executed script to the console for operational tracking.
+
+    Returns:
+        None. The function's main objective is to update the database, and it does not return any value.
+    """
     query = """
         INSERT INTO products (
             id_sam_erp, 
@@ -39,6 +59,7 @@ def update_products():
             description_en = s.szDescrizione;
     """
     query_sync_db(query, True, True)
+
 
 if "__main__" in __name__:
     update_products()

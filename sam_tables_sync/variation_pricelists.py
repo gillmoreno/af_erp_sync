@@ -6,23 +6,45 @@ from apis.sql import query_sync_db
 
 print(os.path.basename(__file__))
 
+
 def log_func(func):
     def wrapper(*args, **kwargs):
         logger.info(f"Executing: {func.__name__}")
         return func(*args, **kwargs)
+
     return wrapper
+
 
 @log_func
 def get_unique_skus():
+    """
+    Retrieves a list of unique SKUs from the `variations` table in the local database.
+
+    This function executes a SQL query to select distinct SKU values from the `variations` table,
+    returning a list of these unique SKU identifiers for further processing.
+
+    Returns:
+        list: A list of unique SKU strings from the `variations` table.
+    """
     query = """
         SELECT sku FROM variations;
     """
     result = query_sync_db(query)
     return [item[0] for item in result]
 
+
 @log_func
 def get_skus_occurrances_in_variation_pricelists(skus: list) -> dict:
-    string_in = str(skus).replace("[","").replace("]","")
+    """
+    Counts the occurrences of each SKU in the `variation_pricelists` table.
+
+    Args:
+        skus (list): A list of SKU strings for which to count occurrences in the price lists.
+
+    Returns:
+        dict: A dictionary mapping each SKU to its count of occurrences in the `variation_pricelists` table.
+    """
+    string_in = str(skus).replace("[", "").replace("]", "")
     query = f"""
         SELECT sku, COUNT(*) as occurrences
         FROM variation_pricelists
@@ -31,9 +53,21 @@ def get_skus_occurrances_in_variation_pricelists(skus: list) -> dict:
     """
     return query_sync_db(query, True)
 
+
 @log_func
 def get_skus_occurrances_in_sam_pricelist(skus: list) -> dict:
-    where_clause = ' OR '.join([f"szArticoloID LIKE '%{sku} %'" for sku in skus])
+    """
+    Determines the occurrences of each SKU within an external system's price list, likely represented
+    by a table or dataset associated with SAM.
+
+    Args:
+        skus (list): A list of SKU strings for which to count occurrences in the external system's price list.
+
+    Returns:
+        dict: A dictionary mapping each SKU to its count of occurrences in the external price list, facilitating
+        comparison and synchronization of price list data between the local and external systems.
+    """
+    where_clause = " OR ".join([f"szArticoloID LIKE '%{sku} %'" for sku in skus])
     query = f"""
         SELECT szArticoloID, COUNT(*) as occurrences
         FROM SAM_PRICELIST
@@ -42,18 +76,19 @@ def get_skus_occurrances_in_sam_pricelist(skus: list) -> dict:
     """
     return query_sync_db(query, True)
 
+
 @log_func
 def find_mismatched_occurrences(list1, list2):
     # Convert list2 into a dictionary for easy lookup
-    dict2 = {item['szArticoloID']: item['occurrences'] for item in list2}
+    dict2 = {item["szArticoloID"]: item["occurrences"] for item in list2}
 
     # List for mismatched skus
     mismatched_skus = []
 
     # Check each sku in list1
     for item in list1:
-        sku = item['sku']
-        occurrences = item['occurrences']
+        sku = item["sku"]
+        occurrences = item["occurrences"]
 
         # Check if the sku exists in list2 and has different occurrences
         if sku in dict2 and dict2[sku] != occurrences:
@@ -61,15 +96,17 @@ def find_mismatched_occurrences(list1, list2):
 
     return mismatched_skus
 
+
 @log_func
 def delete_mismatched_skus(skus):
-    string_in = str(skus).replace("[","").replace("]","")
+    string_in = str(skus).replace("[", "").replace("]", "")
     query = f"""l
         DELETE FROM variation_pricelists
         WHERE sku IN ({string_in});
     """
     query_sync_db(query, False, True)
-    
+
+
 @log_func
 def add_variation_pricelists():
     query = """
@@ -84,6 +121,7 @@ def add_variation_pricelists():
     """
     query_sync_db(query, False, True)
 
+
 @log_func
 def get_out_of_sync_skus():
     query = """
@@ -94,15 +132,17 @@ def get_out_of_sync_skus():
     result = query_sync_db(query)
     return [item[0] for item in result]
 
+
 @log_func
 def put_variations_out_of_sync(skus):
-    string_in = str(skus).replace("[","").replace("]","")
+    string_in = str(skus).replace("[", "").replace("]", "")
     query = f"""
         UPDATE variations
         SET in_sync = 0
         WHERE sku IN ({string_in});
     """
     query_sync_db(query, False, True)
+
 
 @log_func
 def put_variation_pricelists_back_in_sync():
@@ -112,6 +152,7 @@ def put_variation_pricelists_back_in_sync():
     """
     query_sync_db(query, False, True)
 
+
 @log_func
 def update_variation_pricelists():
     logger.info("Updating pricelists...")
@@ -119,8 +160,8 @@ def update_variation_pricelists():
     occurrances_wp = get_skus_occurrances_in_variation_pricelists(unique_skus)
     occurrances_sam = get_skus_occurrances_in_sam_pricelist(unique_skus)
     for item in occurrances_sam:
-        item['szArticoloID'] = item['szArticoloID'].strip()
-    
+        item["szArticoloID"] = item["szArticoloID"].strip()
+
     mismatched_skus = find_mismatched_occurrences(occurrances_wp, occurrances_sam)
     delete_mismatched_skus(mismatched_skus)
     add_variation_pricelists()

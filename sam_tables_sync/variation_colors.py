@@ -6,7 +6,26 @@ from apis.sql import query_sync_db
 
 print(os.path.basename(__file__))
 
+
 def update_variation_colors():
+    """
+    Updates the `variation_colors` table with color information from the `SAM_ARTCLA` table of an external system.
+
+    The function is designed to insert new color records into the `variation_colors` table or update existing records
+    based on the ERP code (`id_sam_erp`). It includes handling for `NULL` ERP codes and ensures that color descriptions
+    are unique and informative by potentially appending the ERP code to the description.
+
+    Note:
+        The script contains commented-out SQL queries that illustrate different approaches to managing color information,
+        including handling `NULL` values for `id_sam_erp` and constructing color descriptions.
+
+    Side Effects:
+        - Executes an SQL insert/update operation on the `variation_colors` table in the local database.
+        - Logs the name of the executed script to the console for operational tracking.
+
+    Returns:
+        None. The function's primary goal is to update the database, and it does not return any value.
+    """
     # query = """
     #     INSERT INTO variation_colors (id_sam_erp, id_wp, value_it, value_en)
     #     SELECT s.szCodice, v.id_wp, s.szDescrizione, s.szDescrizione

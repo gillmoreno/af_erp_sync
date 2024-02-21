@@ -6,7 +6,26 @@ from apis.sql import query_sync_db
 
 print(os.path.basename(__file__))
 
+
 def update_variation_dimensions():
+    """
+    Updates the `variation_dimensions` table with dimension information from the `SAM_VARIATIONS` table.
+
+    This function constructs a concatenated string representation of product variation dimensions (length x width x height)
+    and uses this representation to insert new records into the `variation_dimensions` table or update existing ones. The
+    process involves two main SQL operations: one to insert or update the dimension records based on the concatenated
+    dimension string, and another to ensure that the `value_` field of the table is correctly set to this string.
+
+    The dimension string is constructed with consideration for variations that may not have a specified height, omitting
+    the height dimension when it is not greater than zero.
+
+    Side Effects:
+        - Executes SQL insert/update operations on the `variation_dimensions` table in the local database.
+        - Constructs and updates dimension strings for product variations, ensuring accuracy and consistency of dimension data.
+
+    Returns:
+        None. The primary aim is to update the database, and the function does not return a value.
+    """
     concat = """ CONCAT(
         ROUND(v.szLunghezza, 0),
         'x',

@@ -5,7 +5,27 @@ from apis.sql import query_sync_db
 
 print(os.path.basename(__file__))
 
+
 def update_variations():
+    """
+    Updates the `variations` table with detailed product variation information from an external system.
+
+    This function executes an SQL query to insert new records into the `variations` table or update
+    existing ones with comprehensive data fields. These fields include WordPress IDs, synchronization
+    status, parent ERP IDs, activity status, SKU, descriptions in Italian and English, minimum quantity,
+    image URLs, physical dimensions (length, width, height), color and dimension IDs, and configurator
+    details for both Italian and English versions.
+
+    The function aims to ensure that the local database's variation records are current and accurately
+    reflect the data from the external system, supporting synchronized e-commerce operations.
+
+    Side Effects:
+        - Executes an SQL insert/update operation on the `variations` table in the local database.
+        - Logs the name of the executed script to the console for operational tracking.
+
+    Returns:
+        None. The function's primary purpose is to update the database without returning any value.
+    """
     query = """
         INSERT INTO variations (
             id_wp,

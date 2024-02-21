@@ -12,7 +12,8 @@ from apis.sql import query_sync_db
 
 import requests
 import urllib.request
-# pip install python-wordpress-xmlrpc   
+
+# pip install python-wordpress-xmlrpc
 from wordpress_xmlrpc import Client
 from wordpress_xmlrpc.compat import xmlrpc_client
 from wordpress_xmlrpc.methods import media, users
@@ -22,14 +23,34 @@ load_dotenv(f"../.env")
 
 
 def create_cliche_images():
+    """
+    Initiates the process of creating and updating cliche images on a WordPress site.
+
+    This function configures access to a specified WordPress site using environment variables for the domain,
+    administrator username, and password. It utilizes the WordPress XML-RPC API to perform media upload or update
+    operations related to cliche images.
+
+    The process involves logging the start time, configuring the WordPress client with credentials, and executing
+    various operations to handle cliche images. These operations may include retrieving customer information,
+    processing product data, and interacting with the WordPress media and users APIs.
+
+    Requires:
+        Environment variables for `DOMAIN`, `WP_ADMIN`, and `WP_PASSWORD` to be set for WordPress site access.
+
+    Side Effects:
+        Logs the initiation of the process and performs network operations to interact with the WordPress XML-RPC API.
+
+    Returns:
+        None. The function is expected to have side effects such as logging and WordPress site updates but does not return a value.
+    """
 
     start_time = time.time()
     logger.info("Start Create Cliche Images...")
 
     # Configurazione dell'accesso al sito Wordpress
     url = f"https://{os.environ.get('DOMAIN')}/xmlrpc.php"
-    username = os.environ.get('WP_ADMIN')
-    password = os.environ.get('WP_PASSWORD')
+    username = os.environ.get("WP_ADMIN")
+    password = os.environ.get("WP_PASSWORD")
     client = Client(url, username, password)
 
     # logger.info("client -> {}".format(client))
@@ -50,65 +71,67 @@ def create_cliche_images():
         for cliche in sam_cliches:
 
             # ID dell'utente a cui associare le immagini
-            customer_id = int(cliche['szCodiceCliente'])
+            customer_id = int(cliche["szCodiceCliente"])
 
             check_customer_id = retrieve_customer(customer_id)
 
-            logger.info('CHECK ID -> {}'.format(check_customer_id))
+            logger.info("CHECK ID -> {}".format(check_customer_id))
 
             # se id utente corrisponde alla mail di un customer registrato
-            if 'email' in check_customer_id:
+            if "email" in check_customer_id:
 
-                image_name = cliche['szImmagineCliche']
-                image_description = cliche['szNoteCliche']
+                image_name = cliche["szImmagineCliche"]
+                image_description = cliche["szNoteCliche"]
 
                 # URL dell'immagine
                 image_url = f"https://{os.environ.get('DOMAIN')}/ftp_product_images/cliche_images/{image_name}"
 
-                logger.info('FTP IMAGE URL -> {}'.format(image_url))
+                logger.info("FTP IMAGE URL -> {}".format(image_url))
 
                 check_url_status = get_url_status(image_url)
 
                 if check_url_status == "200":
 
                     cliche_id = get_image_id_by_name(image_name)
-                    
-                    if (cliche_id == 0):
+
+                    if cliche_id == 0:
 
                         # prepare metadata
                         data = {
-                            'name': image_name,
-                            'type': 'image/jpeg',  # mimetype
+                            "name": image_name,
+                            "type": "image/jpeg",  # mimetype
                         }
 
                         # read the binary file and let the XMLRPC library encode it into base64
                         with urllib.request.urlopen(image_url) as img:
-                            data['bits'] = xmlrpc_client.Binary(img.read())
+                            data["bits"] = xmlrpc_client.Binary(img.read())
 
                         response = client.call(media.UploadFile(data))
 
-                        image_description = cliche['szNoteCliche']  
+                        image_description = cliche["szNoteCliche"]
 
                         # Modifica descrizione e autore del post relativo all'immagine
                         url = f"https://{os.environ.get('DOMAIN')}/wp-json/wp-api/v1/cliche?image_id={str(response['id'])}&customer_id={str(customer_id)}&post_content={str(image_description)}"
-                        
-                        logger.info('REQUEST URL -> {}'.format(url))
+
+                        logger.info("REQUEST URL -> {}".format(url))
 
                         requests.request("GET", url)
 
                         # Stampa il risultato
-                        logger.info('Immagine caricata come allegato di WordPress ID {} e associata all\'utente ID {}'
-                            .format(response['id'], customer_id))
-                    else:
                         logger.info(
-                            'Immagine già presente su Wordpress con ID -> {}'.format(cliche_id))
+                            "Immagine caricata come allegato di WordPress ID {} e associata all'utente ID {}".format(
+                                response["id"], customer_id
+                            )
+                        )
+                    else:
+                        logger.info("Immagine già presente su Wordpress con ID -> {}".format(cliche_id))
                 else:
-                    logger.info('Immagine non disponibile, status {}'.format(check_url_status))
+                    logger.info("Immagine non disponibile, status {}".format(check_url_status))
             else:
-                logger.info('User non esistente {}'.format(check_customer_id))
+                logger.info("User non esistente {}".format(check_customer_id))
     else:
         logger.info("NO CLICHE TO SYNC\n...\n")
-    
+
     logger.info(f"Sync cliches, tempo -> {str(time.time() - start_time)}")
 
 

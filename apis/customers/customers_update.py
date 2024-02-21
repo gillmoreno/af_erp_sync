@@ -1,3 +1,11 @@
+"""
+Facilitates the update of existing customer records in the local database with data from WordPress.
+
+This module fetches the latest customer information from WordPress and updates the corresponding
+records in the local database (`db_frontiera`), ensuring that customer data remains synchronized
+between the two systems.
+"""
+
 import os, sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -9,6 +17,17 @@ from customers.customers__common import *
 
 @print_name
 def update_customers_db_frontiera():
+    """
+    Updates existing customer records in the local database with the latest information from WordPress.
+
+    Fetches existing customer data from WordPress, identifies corresponding records in the local database,
+    and updates these records with the latest available information, including user status, email, username,
+    and names.
+
+    Side Effects:
+        - Logs the name of the function being executed for tracking purposes.
+        - Performs database update operations to synchronize customer data.
+    """
     existing_customers = get_existing_customers()
     for customer in existing_customers:
         update_db_frontiera_customer(
@@ -52,6 +71,16 @@ def update_customers_db_frontiera():
 
 
 def get_existing_customers() -> list:
+    """
+    Retrieves a list of existing customers from the local database who have corresponding records in WordPress.
+
+    This function is designed to fetch customer records that already exist in the local database and may require
+    updates to synchronize with the latest data available in WordPress.
+
+    Returns:
+        A list of dictionaries, where each dictionary represents an existing customer record including essential
+        fields such as customer ID, meta data, email, username, and names necessary for the update process.
+    """
     db_frontiera_users_wp_ids = get_db_frontiera_users_wp_ids()
     ids_to_include = [_id[0] for _id in db_frontiera_users_wp_ids]
     return get_customers(ids_to_include, True)
@@ -65,6 +94,19 @@ def update_db_frontiera_customer(
     first_name: str,
     last_name: str,
 ):
+    """
+    Updates a single customer record in the local database with new data.
+
+    Args:
+        id_wp (int): WordPress ID of the customer.
+        pw_user_status (str): Current status of the customer in WordPress.
+        email (str): Customer's email address.
+        username (str): Customer's username.
+        first_name (str): Customer's first name.
+        last_name (str): Customer's last name.
+
+    Updates the specified customer's record in the `customers` table of the local database with the provided details.
+    """
     query = f"""
         UPDATE 
             customers 
@@ -94,6 +136,15 @@ def update_db_frontiera_billing_address(
     email: str,
     phone: str,
 ):
+    """
+    Updates the billing address for a given customer in the local database.
+
+    Args:
+        id_wp (int): WordPress ID of the customer whose billing address is to be updated.
+        first_name (str), last_name (str), company (str), address_1 (str), address_2 (str), city (str): Components of the billing address.
+
+    Updates the billing address details for the specified customer in the local database, ensuring that the information matches the latest data from WordPress.
+    """
     query = f"""
         UPDATE
             billing_addresses
@@ -127,6 +178,24 @@ def update_db_frontiera_default_shipping_address(
     postcode: str,
     country: str,
 ):
+    """
+    Updates the default shipping address for a specified WordPress customer in the local database.
+
+    Args:
+        id_wp (int): WordPress ID of the customer.
+        first_name (str): First name for the shipping address.
+        last_name (str): Last name for the shipping address.
+        company (str): Company name for the shipping address.
+        address_1 (str): Primary address line.
+        address_2 (str): Secondary address line (optional).
+        city (str): City of the shipping address.
+        state_ (str): State or region of the shipping address.
+        postcode (str): Postal code of the shipping address.
+        country (str): Country of the shipping address.
+
+    Fetches the current default shipping address ID for the customer, then updates the address details in the
+    `shipping_addresses` table based on the provided information.
+    """
     query = f"""
         SELECT
             shipping_address_id
@@ -156,6 +225,16 @@ def update_db_frontiera_default_shipping_address(
 
 
 def get_multiple_shipping_addresses(meta_data: list):
+    """
+    Extracts multiple shipping addresses from the provided meta_data if available.
+
+    Args:
+        meta_data (list): A list of meta data items from which to extract multiple shipping addresses.
+
+    Returns:
+        The value associated with the "thwma_custom_address" key if it exists, indicating the presence of
+        multiple custom shipping addresses; otherwise, returns False.
+    """
     for item in meta_data:
         if item["key"] == "thwma_custom_address":
             return item["value"]
@@ -163,6 +242,18 @@ def get_multiple_shipping_addresses(meta_data: list):
 
 
 def update_db_frontiera_shipping_addresses(wp_customer_id: int, thwma_custom_address: dict) -> None:
+    """
+    Updates or inserts multiple shipping addresses for a specific WordPress customer in the local database.
+
+    Args:
+        wp_customer_id (int): WordPress ID of the customer whose shipping addresses are being updated.
+        thwma_custom_address (dict): A dictionary containing the 'shipping' key with nested dictionaries
+                                     for each address, keyed by a unique identifier and containing address details.
+
+    For each address in the `thwma_custom_address` dictionary, this function either updates an existing
+    shipping address record in the `shipping_addresses` table if it exists or inserts a new record if it does not.
+    It also ensures that each shipping address is linked to the customer in the `customers_shipping_addresses` table.
+    """
     for address in thwma_custom_address["shipping"].keys():
         query = f"""
             SELECT
