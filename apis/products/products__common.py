@@ -127,19 +127,26 @@ def associate_product_tag_color(colors: dict, product_id: int):
             id_wp = product_tag_color[0]["id_wp"]
             relate_product_tag_color(product_id, id_wp)
         else:
-            response = create_product_tag_color(product_id, color, colors_english[i])
-            create_product_tag_color_db_frontiera(
-                response.json()[0]["term_id"], color, colors_english[i]
-            )
+            try:
+                response = create_product_tag_color(product_id, color, colors_english[i])
+                create_product_tag_color_db_frontiera(response.json()[0]["term_id"], color, colors_english[i])
+            except Exception as e:
+                print("ECXCEPTION HERE!!!")
+                print("ECXCEPTION HERE!!!")
+                print(f"associate_product_tag_color() -> product_id = {str(product_id)}")
+                print(colors)
+                print(e)
+                print("ECXCEPTION HERE!!!")
+                print("ECXCEPTION HERE!!!")
 
 
 def get_individual_colors(colors: dict) -> tuple:
     # colors_italian = colors["value_it"].replace(" ", "").split("-")
     # colors_english = colors["value_en"].replace(" ", "").split("-")
     colors_italian = colors["value_it"].replace(" ", "").split("_")[0].split("-")
-    
+
     colors_english = colors["value_en"].replace(" ", "").split("_")[0].split("-")
-    
+
     return colors_italian, colors_english
 
 
