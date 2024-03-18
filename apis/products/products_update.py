@@ -59,8 +59,7 @@ def update_variations():
         if not variation_colors_id:
             variation_colors_id = "PREDEF"
         colors = get_colors(variation_colors_id)
-        product_attributes = get_product_attributes(
-            variation["id_parent_sam_erp"])
+        product_attributes = get_product_attributes(variation["id_parent_sam_erp"])
         parent_product_attributes = [
             {
                 "id": 2,
@@ -90,6 +89,7 @@ def update_variations():
             {"key": "pbq_table_layout", "value": "hover_table"},
             {"key": "_alg_wc_pq_min", "value": variation["quantity_min"]},
             {"key": "_alg_wc_pq_step", "value": variation["quantity_min"]},
+            {"key": "erp_sync_stock", "value": variation["stock"]},
         ]
         meta_data.append(
             {

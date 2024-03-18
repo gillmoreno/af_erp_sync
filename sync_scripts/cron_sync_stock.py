@@ -32,20 +32,20 @@ def sync_stock():
     """
 
     logger.info("Synching stock...")
-    query = f"""
-        UPDATE variations
-        SET stock = (
-            SELECT szSemaforoID
-            FROM SAM_GIACENZE
-            WHERE SAM_GIACENZE.szArticoloID LIKE CONCAT('%', variations.sku, ' ', '%')
-        )
-        WHERE EXISTS (
-            SELECT 1
-            FROM SAM_GIACENZE
-            WHERE SAM_GIACENZE.szArticoloID LIKE CONCAT('%', variations.sku, ' ', '%')
-        );
+    query = """
+        SELECT variations.sku AS sku, variations.stock AS old_stock, SAM_GIACENZE.szSemaforoID AS new_stock
+        FROM variations
+        JOIN SAM_GIACENZE ON SAM_GIACENZE.szArticoloID LIKE CONCAT('%', variations.sku, ' ', '%')
+        WHERE variations.stock != SAM_GIACENZE.szSemaforoID
     """
-    query_sync_db(query, False, True)
+    results_dict = query_sync_db(query, True)
+    for result in results_dict:
+        update_query = f"""
+            UPDATE variations
+            SET stock = {result["new_stock"]}, in_sync = 0
+            WHERE sku = '{result["sku"]}'
+        """
+        query_sync_db(update_query, False, True)
     logger.info("Stock synched successfully!")
 
 
