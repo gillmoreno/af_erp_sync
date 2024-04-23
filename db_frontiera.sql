@@ -59,6 +59,9 @@ CREATE TABLE customers(
     first_name VARCHAR(128),
     last_name VARCHAR(128),
     vat_number VARCHAR(16),
+    pec VARCHAR(128),
+    cf VARCHAR(16),
+    sdi_code VARCHAR(7),
     PRIMARY KEY (id_wp)
 );
 

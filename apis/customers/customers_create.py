@@ -41,6 +41,9 @@ def create_new_customers_db_frontiera():
             customer["first_name"],
             customer["last_name"],
             get_meta_data_key(customer["meta_data"], "vat_number"),
+            get_meta_data_key(customer["meta_data"], "pec"),
+            get_meta_data_key(customer["meta_data"], "codice_fiscale"),
+            get_meta_data_key(customer["meta_data"], "sdi_code"),
         )
         create_db_frontiera_addresses(
             customer["id"],
@@ -72,6 +75,9 @@ def create_db_frontiera_customer(
     first_name: str,
     last_name: str,
     vat_number: str,
+    pec: str = "",
+    cf: str = "",
+    sdi_code: str = "",
 ):
     """
     Creates a new customer record in the local database with details fetched from WordPress.

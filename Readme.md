@@ -1,5 +1,12 @@
 # WooCommerce and ERP sync API
 
+## Clean mysql logs to free space
+
+1) Stop mysql service `docker stop db``
+2) Enter root mode `root -i`
+3) `rm /var/lib/docker/volumes/wp_docker_ubuntu_dbdata/_data/binlog.0*`
+4) Remove entries from the index file `/var/lib/docker/volumes/wp_docker_ubuntu_dbdata/_data# nano binlog.index `
+
 ## How to handle images
 
 * We use vsftpd to sync images from the `/opt/ftp_images` to wordpress
